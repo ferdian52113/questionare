@@ -25,6 +25,7 @@
 
             <div class="wrapper wrapper-content">
                 <div class="container">
+                    <?php echo $this->session->flashdata('msg'); ?>
                     <div class="row">
                         <!-- Create Form-->
                         <div class="col-lg-4">

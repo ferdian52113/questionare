@@ -14,12 +14,12 @@ class admin extends CI_Controller {
 	}
 	public function index()
 	{		
-		// $data['form'] = $this->model_users->form_list();
-		// $data['list_construct'] = $this->model_users->list_construct();
-		// $data['list_pertanyaan'] = $this->model_users->list_pertanyaan();
-		// $data['list_multiple_choice'] = $this->model_users->list_multiple_choice();
-		// $data['list_forced_choice'] = $this->model_users->list_forced_choice();
-		// $data['list_kategori'] = $this->model_users->list_kategori();
+		// $data['form'] = $this->model_admin->form_list();
+		// $data['list_construct'] = $this->model_admin->list_construct();
+		// $data['list_pertanyaan'] = $this->model_admin->list_pertanyaan();
+		// $data['list_multiple_choice'] = $this->model_admin->list_multiple_choice();
+		// $data['list_forced_choice'] = $this->model_admin->list_forced_choice();
+		// $data['list_kategori'] = $this->model_admin->list_kategori();
 		$this->load->view('admin/form_list');
 	}
 
@@ -28,15 +28,16 @@ class admin extends CI_Controller {
 		$this->form_validation->set_rules('description', 'description');
 			
 		if ($this->form_validation->run() == FALSE){
+			$this->session->set_flashdata('msg', '<div class="alert animated fadeInRight alert-danger">Gagal menambahkan form baru.</div>');
 			redirect('admin');
 		}
 		else {
 			$status = $this->input->post('status');
-			$form_code  = getRandomString();
+			$form_code  = $this->getRandomString();
 
 			//eksekusi query insert
 			$data_form = array(
-				'form_code'		=> $form_code,
+				'formCode'		=> $form_code,
 				'link'			=> $this->input->post('link'),
 				'title'			=> $this->input->post('title'),
 				'description'	=> $this->input->post('description'),
@@ -45,7 +46,8 @@ class admin extends CI_Controller {
 				'createdBy'		=> 'AAA',
 			);
 
-			$this->model_users->insertData('tb_form',$data_form);
+			$this->model_admin->insertData('tb_form',$data_form);
+			$this->session->set_flashdata('msg', '<div class="alert animated fadeInRight alert-success">Berhasil menambahkan form baru.</div>');
 			redirect('admin');
 
 		}
@@ -66,8 +68,8 @@ class admin extends CI_Controller {
 	public function construct()
 	{		
 		//print_r($data);
-		$data['data_form'] = $this->model_users->data_form();
-		$data['list_construct'] = $this->model_users->list_construct();
+		$data['data_form'] = $this->model_admin->data_form();
+		$data['list_construct'] = $this->model_admin->list_construct();
 		$this->load->view('admin/list_construct',$data);
 	}
 
@@ -92,8 +94,8 @@ class admin extends CI_Controller {
 						'type'			=> $this->input->post('type'),
 						'jumlah'		=> $this->input->post('jumlah'),
 					);
-					$this->model_users->edit_pertanyaan($data_pertanyaan, $id_child);
-					$id_choice=$this->model_users->ambil_pertanyaan();
+					$this->model_admin->edit_pertanyaan($data_pertanyaan, $id_child);
+					$id_choice=$this->model_admin->ambil_pertanyaan();
 					$data_pilihan= array(
 						'id_question'	=> $id_choice[0]->id_child,
 						'choice1'		=> $this->input->post('tanya1'),
@@ -102,7 +104,7 @@ class admin extends CI_Controller {
 						'choice4'		=> $this->input->post('tanya4'),
 						'answer'		=> $this->input->post('jawaban'),
 					);
-					$this->model_users->edit_pilihan($data_pilihan);
+					$this->model_admin->edit_pilihan($data_pilihan);
 			} elseif($this->input->post('type')=='forced choice') {
 					//eksekusi query insert
 					$data_pertanyaan = array(
@@ -112,7 +114,7 @@ class admin extends CI_Controller {
 						'type'			=> $this->input->post('type'),
 						'jumlah'		=> $this->input->post('jumlah'),
 					);
-					$this->model_users->edit_pertanyaan($data_pertanyaan, $id_child);
+					$this->model_admin->edit_pertanyaan($data_pertanyaan, $id_child);
 					$data_forced= array(
 						'id_child'		=> $data_id[0]->id_child,
 						'pertanyaan1'	=> $this->input->post('pertanyaan1'),
@@ -120,7 +122,7 @@ class admin extends CI_Controller {
 						'pertanyaan2'	=> $this->input->post('pertanyaan2'),
 						'kategori2'		=> $this->input->post('kategori2'),
 					);
-					$this->model_users->edit_forced($data_forced);
+					$this->model_admin->edit_forced($data_forced);
 			} elseif ($this->input->post('type')=='skala'){
 					$data_pertanyaan = array(
 						'id_form'		=> $this->input->post('id_form'),
@@ -130,7 +132,7 @@ class admin extends CI_Controller {
 						'kategori'		=> $this->input->post('kategori'),
 						'jumlah'		=> $this->input->post('jumlah')
 					);
-					$this->model_users->edit_pertanyaan($data_pertanyaan, $id_child);
+					$this->model_admin->edit_pertanyaan($data_pertanyaan, $id_child);
 			} else {
 			//eksekusi query insert
 			$data_pertanyaan = array(
@@ -140,7 +142,7 @@ class admin extends CI_Controller {
 				'type'			=> $this->input->post('type'),
 				'jumlah'		=> $this->input->post('jumlah')
 			);
-			$this->model_users->edit_pertanyaan($data_pertanyaan, $id_child);
+			$this->model_admin->edit_pertanyaan($data_pertanyaan, $id_child);
 			}
 			redirect('admin');
 		}
@@ -158,7 +160,7 @@ class admin extends CI_Controller {
 				'id_form'		=> $this->input->post('id_form'),
 				'parent_name'		=> $this->input->post('parent_name'),
 			);
-			$this->model_users->edit_construct($data_pertanyaan, $id_parent);
+			$this->model_admin->edit_construct($data_pertanyaan, $id_parent);
 			redirect('admin/construct');
 
 		}
@@ -178,7 +180,7 @@ class admin extends CI_Controller {
 				'deskripsi'		=> $this->input->post('deskripsi'),
 				'form_type'		=> $this->input->post('form_type')
 			);
-			$this->model_users->edit_form($data_form, $id_form);
+			$this->model_admin->edit_form($data_form, $id_form);
 			redirect('admin/forms');
 
 		}
@@ -257,7 +259,7 @@ class admin extends CI_Controller {
 						                                    FALSE);
 						    //  Insert row data array into your database of choice here
 						    //print_r($rowData[1]);
-						    $this->model_users->simpan($rowData);
+						    $this->model_admin->simpan($rowData);
 						}
 						
 						//delete file
