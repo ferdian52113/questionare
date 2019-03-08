@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class model_admin extends CI_Model {
-	
+
 	public function checkAccount($username,$password) {
         $query = "select username from tb_user where username=? and role=1";
         $cek_awal = $this->db->query($query, array($username))->row();
@@ -34,6 +34,5 @@ class model_admin extends CI_Model {
         $this->db->where($param, $value);
         $this->db->delete($table);
     }
-
 
 }
