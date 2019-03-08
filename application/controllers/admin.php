@@ -14,13 +14,13 @@ class admin extends CI_Controller {
 	}
 	public function index()
 	{		
-		// $data['form'] = $this->model_admin->form_list();
+		$data['form'] = $this->model_admin->form_list();
 		// $data['list_construct'] = $this->model_admin->list_construct();
 		// $data['list_pertanyaan'] = $this->model_admin->list_pertanyaan();
 		// $data['list_multiple_choice'] = $this->model_admin->list_multiple_choice();
 		// $data['list_forced_choice'] = $this->model_admin->list_forced_choice();
 		// $data['list_kategori'] = $this->model_admin->list_kategori();
-		$this->load->view('admin/form_list');
+		$this->load->view('admin/form_list',$data);
 	}
 
 	public function add_form(){
@@ -34,6 +34,7 @@ class admin extends CI_Controller {
 		else {
 			$status = $this->input->post('status');
 			$form_code  = $this->getRandomString();
+			$link	 = $this->input->post('link');
 
 			//eksekusi query insert
 			$data_form = array(
@@ -43,11 +44,17 @@ class admin extends CI_Controller {
 				'description'	=> $this->input->post('description'),
 				'isActive'		=> $status,
 				'createdDate'	=> date("Y-m-d H:i:s"),
-				'createdBy'		=> 'AAA',
+				'createdBy'		=> $this->session->userdata('username'),
 			);
 
-			$this->model_admin->insertData('tb_form',$data_form);
-			$this->session->set_flashdata('msg', '<div class="alert animated fadeInRight alert-success">Berhasil menambahkan form baru.</div>');
+			$sts = $this->model_admin->cekData('tb_form',$link);
+			if($sts){
+				$this->model_admin->insertData('tb_form',$data_form);
+				$this->session->set_flashdata('msg', '<div class="alert animated fadeInRight alert-success">Berhasil menambahkan form baru.</div>');	
+			} else {
+				$this->session->set_flashdata('msg', '<div class="alert animated fadeInRight alert-danger">Gagal menambahkan form baru. Silahkan memasukkan link yang berbeda.</div>');
+			}
+			
 			redirect('admin');
 
 		}

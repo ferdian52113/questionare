@@ -24,6 +24,7 @@
             <?php include('admin_header.php') ?>
 
             <div class="wrapper wrapper-content">
+
                 <div class="container">
                     <?php echo $this->session->flashdata('msg'); ?>
                     <div class="row">
@@ -67,10 +68,26 @@
                                 </div>  
                                 
                             </div>
-                            <div class="ibox float-e-margins" >
-                                <div class="ibox-content">
-                                    a
+                            <div class="row">
+                            <?php for ($i=0; $i < count($form) ; $i++) { ?>
+                            
+                                <div class="col-md-6">
+                                    <div class="ibox float-e-margins" >
+                                        <div class="ibox-content">
+                                            <div>
+                                                <h3><b><?php echo $form[$i]->title ?></b></h3>
+                                                <p><a href="<?php echo base_url()?>user/open/<?php echo $form[$i]->link ?>">http://localhost/user/open/<?php echo $form[$i]->link ?></a></p>
+                                                <p><?php echo $form[$i]->description ?></p>
+                                                <button class="btn btn-xs btn-warning"><i class="fa fa-pencil "></i> Edit Form</button>
+                                                <button class="btn btn-xs btn-danger"><i class="fa fa-trash "></i> Hapus Form</button>
+                                                <button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> Lihat Respon</button>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
                                 </div>
+                            
+                            <?php } ?>
                             </div>
                         </div>
 
@@ -78,10 +95,11 @@
                 </div>
 
             </div>
+            <?php include('admin_footer.php') ?>
         </div>
     </div>
     
-    <?php include('admin_footer.php') ?>
+    
 
 
 

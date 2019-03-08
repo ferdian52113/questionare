@@ -35,4 +35,22 @@ class model_admin extends CI_Model {
         $this->db->delete($table);
     }
 
+    public function form_list() {
+		$query = $this->db->query("SELECT * FROM tb_form WHERE isActive='1'");
+		if($query->num_rows() > 0){
+            return $query->result();
+        } else{
+            return array();
+        }
+	}
+
+    public function cekData($table,$link){
+        $query = $this->db->query("SELECT * FROM $table WHERE link='$link'");
+        if($query->num_rows() > 0){
+            return false;
+        } else{
+            return true;
+        }
+    }
+
 }

@@ -17,8 +17,9 @@
 
                         </ul>
                         <ul class="nav navbar-top-links navbar-right">
+                            <li><p>Hi, <strong><?php echo strtoupper($this->session->userdata('username'));?></strong></p></li>
                             <li>
-                                <a href="<?php echo base_url()?>login.html">
+                                <a href="<?php echo base_url()?>admin/logout">
                                     <i class="fa fa-sign-out"></i> Log out
                                 </a>
                             </li>
