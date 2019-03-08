@@ -33,7 +33,7 @@ class admin extends CI_Controller {
 		else {
 			$status = $this->input->post('status');
 			$form_code  = getRandomString();
-			$link
+			$link = $this->input->post('link)');
 
 			//eksekusi query insert
 			$data_form = array(
@@ -46,7 +46,7 @@ class admin extends CI_Controller {
 				'createdBy'		=> 'AAA',
 			);
 
-			$this->model_users->add_form($data_form);
+			$this->model_admin->add_form($data_form);
 			redirect('admin');
 
 		}
