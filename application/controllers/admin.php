@@ -21,21 +21,76 @@ class admin extends CI_Controller {
 	{
 		parent::__construct();
 		
-		$this->load->model('model_users');
-		$this->load->model('demografi_model');
-		$this->load->model('dashboard_model');
+		$this->load->model('model_admin');
 	}
 	public function index()
 	{		
-		//print_r($data);
-		$data['data_form'] = $this->model_users->data_form();
-		$data['list_construct'] = $this->model_users->list_construct();
-		$data['list_pertanyaan'] = $this->model_users->list_pertanyaan();
-		$data['list_multiple_choice'] = $this->model_users->list_multiple_choice();
-		$data['list_forced_choice'] = $this->model_users->list_forced_choice();
-		$data['list_kategori'] = $this->model_users->list_kategori();
-		$this->load->view('admin/list_pertanyaan',$data);
+		// $data['form'] = $this->model_users->form_list();
+		// $data['list_construct'] = $this->model_users->list_construct();
+		// $data['list_pertanyaan'] = $this->model_users->list_pertanyaan();
+		// $data['list_multiple_choice'] = $this->model_users->list_multiple_choice();
+		// $data['list_forced_choice'] = $this->model_users->list_forced_choice();
+		// $data['list_kategori'] = $this->model_users->list_kategori();
+		$this->load->view('admin/form_list');
 	}
+
+	public function add_form(){
+		$this->form_validation->set_rules('title', 'title');
+		$this->form_validation->set_rules('description', 'description');
+			
+		if ($this->form_validation->run() == FALSE){
+			redirect('admin');
+		}
+		else {
+			$status = $this->input->post('status');
+			$form_code  = getRandomString();
+			$link
+
+			//eksekusi query insert
+			$data_form = array(
+				'form_code'		=> $form_code,
+				'link'			=> $this->input->post('link'),
+				'title'			=> $this->input->post('title'),
+				'description'	=> $this->input->post('description'),
+				'isActive'		=> $status,
+				'createdDate'	=> date("Y-m-d H:i:s"),
+				'createdBy'		=> 'AAA',
+			);
+
+			$this->model_users->add_form($data_form);
+			redirect('admin');
+
+		}
+	}
+
+	function getRandomString($length = 10) {
+	    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	    $string = '';
+
+	    for ($i = 0; $i < $length; $i++) {
+	        $string .= $characters[mt_rand(0, strlen($characters) - 1)];
+	    }
+
+	    return $string;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// --------------------------------------------------------------
 
 	public function construct()
 	{		
@@ -377,25 +432,7 @@ class admin extends CI_Controller {
 		}
 	}
 
-	public function add_form(){
-		$this->form_validation->set_rules('judul', 'Judul');
-		$this->form_validation->set_rules('deskripsi', 'Deskripsi');
-			
-		if ($this->form_validation->run() == FALSE){
-			redirect('admin/forms');
-		}
-		else {
-			//eksekusi query insert
-			$data_form = array(
-				'judul'			=> $this->input->post('judul'),
-				'deskripsi'		=> $this->input->post('deskripsi'),
-				'form_type'		=> $this->input->post('form_type')
-			);
-			$this->model_users->add_form($data_form, $id_form);
-			redirect('admin/forms');
-
-		}
-	}
+	
 
 	function demography()
 	{

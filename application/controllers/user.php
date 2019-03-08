@@ -31,7 +31,6 @@ class User extends CI_Controller {
 	}
 	public function index()
 	{
-		$data['data_form'] = $this->model_users->data_form();
 		$this->load->view('user/user_index',$data);
 	}
 
