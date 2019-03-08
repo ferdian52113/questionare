@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="<?php echo base_url()?>assets/gi.ico">
-    <title>Garuda Indonesia Group | Login</title>
+    <title>Login</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -30,7 +30,7 @@
                 <!--<h1 class="logo-name pull-left" style="padding-left: 30px;">GA</h1>-->
                 <img src="assets/logo.png" class="img-responsive">
             </div>
-            <h2>Simple Apps</h2>
+            <h2>Build Your Own Questionare</h2>
 
             <p>Login for administrator.</p>
                 <form class="m-t" role="form" action="<?php echo base_url()."admin_login/login/"?>" method="POST">
@@ -48,7 +48,7 @@
                         </p>
                 </form>
             <div class="hr-line-dashed" style="border-color: #b2b2b2"></div>
-            <strong>Copyright</strong> &copy; 2017 Garuda Indonesia. All rights reserved.
+            <strong>Copyright</strong> &copy; <?php echo date("Y"); ?>. All rights reserved.
     </div>
 
 </body>
