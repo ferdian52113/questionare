@@ -25,11 +25,9 @@ class User extends CI_Controller {
         
         $this->load->helper('text');
         $this->load->helper('form');
-        $this->load->library("PHPExcel");
         $this->load->library('image_lib');
         $this->load->library('form_validation');
 		$this->load->model('model_users');
-		$this->load->model('demografi_model');
 	}
 	public function index()
 	{
