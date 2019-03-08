@@ -6,13 +6,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="<?php echo base_url()?>assets/gi.ico">
-    <title>Sincerity 360</title>
+    <title>Garuda Indonesia Group | Login</title>
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="<?php echo base_url();?>css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?php echo base_url();?>font-awesome/css/font-awesome.css" rel="stylesheet">
 
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link href="<?php echo base_url();?>css/animate.css" rel="stylesheet">
+    <link href="<?php echo base_url();?>css/style.css" rel="stylesheet">
 
 </head>
 <body class="gray-bg" style="display: table;
@@ -30,25 +30,36 @@
                 <!--<h1 class="logo-name pull-left" style="padding-left: 30px;">GA</h1>-->
                 <img src="assets/logo.png" class="img-responsive">
             </div>
-            <h2>Garuda Sincerity 360</h2>
+            <h2 style="font-size: 35px;">Simple Apps</h2>
 
-            <p>Login in. To see your score.</p>
-                <form class="m-t" role="form" action="<?php echo base_url()."login/pegawai"?>" method="POST">
-                        <div class="form-group">
-                            <div class="hr-line-dashed" style="border-color: #b2b2b2"></div>
-                            <label>Nomor Pegawai</label>
-                            <input type="text" class="form-control" placeholder="" name="nopeg" required="">
-                        </div>
-                        <button type="submit" class="btn btn-info block full-width m-b">Login</button>
-
-                        <p class="text-muted text-center">
-                            <small>Masukkan nomer pegawai anda untuk melihat nilai Sincerity 360.</small>
-                        </p>
+            <p>Login in o see how your score made.</p>
+            <form class="m-t" role="form" action="<?php echo base_url()."login/pegawai"?>" method="POST">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <div class="form-group row">
+                        <div class="col-md-2"><label>Email</label></div>
+                        <div class="col-md-10"><input type="text" class="form-control" placeholder="ex: hendra@gmail.com" name="email" required=""></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-2"><label>Nama</label></div>
+                        <div class="col-md-10"><input type="text" class="form-control" placeholder="ex: hendra" name="nama" required=""></div>
+                    </div>
+                    <button type="submit" class="btn btn-info block full-width m-b">Login</button>
+                <div class="hr-line-dashed" style="border-color: #b2b2b2"></div>
+                <strong>Copyright</strong> &copy; 2017 Garuda Indonesia. All rights reserved.
                 </form>
-            <div class="hr-line-dashed" style="border-color: #b2b2b2"></div>
-            <strong>Copyright</strong> &copy; 2017 Garuda Indonesia. All rights reserved.
+            </div>
+            <div class="col-md-2"></div>
     </div>
+    <!-- Mainly scripts -->
+    <script src="<?php echo base_url();?>js/jquery-2.1.1.js"></script>
+    <script src="<?php echo base_url();?>js/bootstrap.min.js"></script>
+    <script src="<?php echo base_url();?>js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="<?php echo base_url();?>js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
+    <!-- Custom and plugin javascript -->
+    <script src="<?php echo base_url();?>js/inspinia.js"></script>
+    <script src="<?php echo base_url();?>js/plugins/pace/pace.min.js"></script>
 </body>
 
 </html>

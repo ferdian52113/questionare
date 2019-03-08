@@ -20,40 +20,35 @@ class Admin_login extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('model_admin');
+		$this->load->model('model_users');
 	}
 	public function index()
 	{
 			$this->load->view('login_admin');
 
 	}
-	function admin()
+	function login()
 	{
 		$username = $_POST['username'];
-		$password = md5($_POST['password']);
-		$data = $this->model_admin->check_credential($username,$password);
-		$tahun_aktif = $this->model_admin->skala()->tahun_aktif;
-		$periode_aktif = $this->model_admin->skala()->periode_aktif;
+		$password = $_POST['password'];
+		//print_r($username);
+		$data= $this->model_users->login($username,$password);
+		print_r($data);
 		if($data == null){
-			echo "<script>
-			alert('Username / Password salah');
-			window.location.href='".base_url('admin_login')."';
-			</script>";
+			$message = "Username atau Password salah";
+			echo "<script type='text/javascript'>alert('$message');
+			window.location.href='".base_url("admin_login")."';</script>";		
 			}
 		else{
 			//if match
 			foreach($data as $d);
 			$newdata = array(
-			    'id'  		=> $d->id,
-			    'username'  => $d->username,
-			    'role'  	=> $d->role,
-			    'tahun_pilih' 	=> $tahun_aktif,
-				'tahun' 		=> $tahun_aktif,
-				'periode'  	    => $periode_aktif,
-				'periode_pilih' => $periode_aktif
+			    'id_admin'	=> $d->id_admin,
+			    'username'  => $d->username
 			);
 			$this->session->set_userdata($newdata);
-			redirect('admin');
+			redirect('admin/index');
+			//print_r("ada");	
 			}
 		}
 	

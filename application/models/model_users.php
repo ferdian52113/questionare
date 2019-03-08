@@ -1,375 +1,334 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class model_users extends CI_Model {
-
-	public function get_provinsi(){
-        $hasil = $this->db->query("SELECT * FROM db_provinsi");
-        if($hasil->num_rows() > 0){
-            return $hasil->result();
-        } else{
-            return array();
-        }
-    }
-
-    public function get_kota($param){
-        $hasil = $this->db->query("SELECT * FROM db_kota WHERE id_provinsi = '$param'");
-        if($hasil->num_rows() > 0){
-            return $hasil->result();
-        } else{
-            return "Error";
-        }
-    }
-
-    public function get_cakupan_ori($ori,$provinsi,$kota){
-        if($ori == 0){
-            $query = "SELECT id_cakupan,`provinsi`, `kota`, `kecamatan`, `desa`, sum(`proyeksi`) as proyeksi, sum(`riil`) as riil, sum(`cakupan`) as cakupan, `tahun` FROM `db_cakupan` a, `db_provinsi` b, `db_kota` c WHERE a.ori IN (1,2,3) AND a.provinsi = b.nama_provinsi AND a.kota = c.nama_kota and b.id_provinsi=1 and a.tahun=2018";
-            
-            if($provinsi != null){
-                $query = $query ." and b.id_provinsi=$provinsi";
-            }
-
-            if($kota != null){
-                $query = $query ." and c.id_kota=$kota";
-            }
-
-            $query = $query . ' group by a.provinsi,a.kota,a.tahun ORDER BY id_cakupan ASC'; 
-        } else {
-            $query = "SELECT a.* FROM `db_cakupan` a, `db_provinsi` b, `db_kota` c WHERE a.ori = $ori AND a.provinsi = b.nama_provinsi AND a.kota = c.nama_kota and a.tahun=2018";
-
-            if($provinsi != null){
-                $query = $query ." and b.id_provinsi=$provinsi";
-            }
-
-            if($kota != null){
-                $query = $query ." and c.id_kota=$kota";
-            }
-        }
-        $hasil = $this->db->query($query);
-        if($hasil->num_rows() > 0){
-            return $hasil->result();
-        } else{
-            return "Error";
-        }
-    }
-
-    public function get_penderita_difteri($tahun,$bulan,$provinsi,$kota){
-        $query = "SELECT COALESCE(COUNT(*),'') as Jumlah_Penderita FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa WHERE YEAR(tanggal_lapor) = $tahun AND MONTH(tanggal_lapor) = $bulan";
-
-        if($provinsi != null){
-            $query = $query ." and b.id_provinsi=$provinsi";
-        }
-
-        if($kota != null){
-            $query = $query ." and c.id_kota=$kota";
-        }
-
-        $query = $query . " GROUP BY Month(tanggal_lapor),YEAR(tanggal_lapor)";
-
-            /*if($kec != null){
-                $query = $query ." and d.id_kecamatan=$kec";
-            }
-
-            if($desa != null){
-                $query = $query ." and e.id_desa=$desa";
-            }*/
-            $hasil = $this->db->query($query);
-            if($hasil->num_rows() > 0){
-                return $hasil->result();
-            } else{
-                return false;
-            }
-        }
-
-        public function getKota($provinsi,$kota){
-            $query = "SELECT * FROM db_kota WHERE id_provinsi = $provinsi";
-
-            if($kota != null){
-                $query = $query ." and id_kota=$kota";
-            }
-
-            $hasil = $this->db->query($query);
-
-            if($hasil->num_rows() > 0){
-                return $hasil->result();
-            } else{
-                return "Error";
-            }
-        }
-
-        public function get_penderita_difteri_by_terima_ads($provinsi,$kota){
-            $query = "SELECT";
-            if($kota != null){
-                $query = $query ." a.kota,";
-            }
-
-            $query = $query . " (CASE WHEN terima_ADS = 1 THEN 'Terima ADS' ELSE 'Tidak Terima ADS' END) as Status, MONTH(tanggal_lapor) as Bulan, count(terima_ADS) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where  month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL ";
-
-            if($provinsi != null){
-                $query = $query ." and b.id_provinsi=$provinsi";
-            }
-
-            if($kota != null){
-                $query = $query ." and c.id_kota=$kota";
-            }
-
-            $query = $query . " GROUP BY a.terima_ADS,month(a.tanggal_lapor)";
-
-            $hasil = $this->db->query($query);
-
-            if($hasil->num_rows() > 0){
-                return $hasil->result();
-            } else{
-                return false;
-            }
-        }
-
-
-        public function get_penderita_difteri_by_terima_ads_status_imun($provinsi,$kota,$status){
-            $query = "SELECT";
-            if($kota != null){
-                $query = $query ." a.kota,";
-            }
-
-            $query = $query . " month(tanggal_lapor) as Bulan,(CASE WHEN a.status_imun_pernah = 1 THEN 'Pernah Imunisasi' ELSE 'Tidak Pernah Imunisasi' END) as Status,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where terima_ADS = $status AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL ";
-
-            if($provinsi != null){
-                $query = $query ." and b.id_provinsi=$provinsi";
-            }
-
-            if($kota != null){
-                $query = $query ." and c.id_kota=$kota";
-            }
-
-            $query = $query . " GROUP BY a.status_imun_pernah,month(a.tanggal_lapor)";
-
-            $hasil = $this->db->query($query);
-
-            if($hasil->num_rows() > 0){
-                return $hasil->result();
-            } else{
-                return false;
-            }
-        }
-
-        public function get_penderita_difteri_by_umur($provinsi,$kota,$nomor){
-            if($nomor == 10){
-                $query = "SELECT";
-                if($kota != null){
-                    $query = $query ." a.kota,";
-                }
-
-                $query = $query . " 'Kurang dari 19 Tahun' as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query = $query ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query = $query ." and c.id_kota=$kota";
-                }
-
-                $query = $query . " GROUP BY month(a.tanggal_lapor)";
-
-                $query1 = "SELECT";
-                if($kota != null){
-                    $query1 = $query1 ." a.kota,";
-                }
-
-                $query1 = $query1 . " 'Lebih dari 19 Tahun' as Status, month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query1 = $query1 ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query1 = $query1 ." and c.id_kota=$kota";
-                }
-
-                $query1 = $query1 . " GROUP BY month(a.tanggal_lapor)";
-                $string = $query.' UNION '.$query1;
-                $hasil = $this->db->query($string);
-
-                if($hasil->num_rows() > 0){
-                    return $hasil->result();
-                } else{
-                    return false;
-                }
-            } else if($nomor == 11){
-                $query = "SELECT";
-                if($kota != null){
-                    $query = $query ." a.kota,";
-                }
-
-                $query = $query . " 'Kurang dari 19 Tahun' as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query = $query ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query = $query ." and c.id_kota=$kota";
-                }
-
-                $query = $query . " GROUP BY month(a.tanggal_lapor)";
-
-                $query1 = "SELECT";
-                if($kota != null){
-                    $query1 = $query1 ." a.kota,";
-                }
-
-                $query1 = $query1 . " 'Lebih dari 19 Tahun' as Status, month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query1 = $query1 ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query1 = $query1 ." and c.id_kota=$kota";
-                }
-
-                $query1 = $query1 . " GROUP BY month(a.tanggal_lapor)";
-                $string = $query.' UNION '.$query1;
-                $hasil = $this->db->query($string);
-
-                if($hasil->num_rows() > 0){
-                    return $hasil->result();
-                } else{
-                    return false;
-                }
-            } else if($nomor == 12){
-                $query = "SELECT";
-                if($kota != null){
-                    $query = $query ." a.kota,";
-                }
-
-                $query = $query . " 'Kurang dari 19 tahun' as Umur,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND a.rekom_ads = 0 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query = $query ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query = $query ." and c.id_kota=$kota";
-                }
-
-                $query1 = "SELECT";
-                if($kota != null){
-                    $query1 = $query1 ." a.kota,";
-                }
-
-                $query1 = $query1 . " 'Lebih dari 19 tahun' as Umur,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND a.rekom_ads = 0 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query1 = $query1 ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query1 = $query1 ." and c.id_kota=$kota";
-                } 
-                $string = $query.' UNION '.$query1;
-                $hasil = $this->db->query($string);
-
-                if($hasil->num_rows() > 0){
-                    return $hasil->result();
-                } else{
-                    return false;
-                }
-            } else if($nomor == 13) {
-                $query = "SELECT";
-                if($kota != null){
-                    $query = $query ." a.kota,";
-                }
-
-                $query = $query . " 'Kurang dari 19 Tahun' as Penderita,(CASE WHEN a.status_imun_pernah = 1 THEN 'Pernah Imunisasi' ELSE 'Tidak Pernah Imunisasi' END) as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND a.terima_ads = 1 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL and a.Umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query = $query ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query = $query ." and c.id_kota=$kota";
-                }
-
-                $query = $query . " GROUP BY month(a.tanggal_lapor),a.status_imun_pernah";
-
-                $query1 = "SELECT";
-                if($kota != null){
-                    $query1 = $query1 ." a.kota,";
-                }
-
-                $query1 = $query1 . " 'Lebih dari 19 Tahun' as Penderita,(CASE WHEN a.status_imun_pernah = 1 THEN 'Pernah Imunisasi' ELSE 'Tidak Pernah Imunisasi' END) as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND a.terima_ads = 1 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL and a.Umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query1 = $query1 ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query1 = $query1 ." and c.id_kota=$kota";
-                }
-
-                $query1 = $query1 . " GROUP BY month(a.tanggal_lapor),a.status_imun_pernah";
-                $string = $query.' UNION '.$query1;
-                $hasil = $this->db->query($string);
-
-                if($hasil->num_rows() > 0){
-                    return $hasil->result();
-                } else{
-                    return false;
-                }
-            } else if ($nomor == 14){
-                $query = "SELECT";
-                if($kota != null){
-                    $query = $query ." a.kota,";
-                }
-
-                $query = $query . " 'Kurang dari 19 Tahun' as Penderita,(CASE WHEN a.status_imun_pernah = 1 THEN 'Pernah Imunisasi' ELSE 'Tidak Pernah Imunisasi' END) as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND a.terima_ads = 0 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL and a.Umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query = $query ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query = $query ." and c.id_kota=$kota";
-                }
-
-                $query = $query . " GROUP BY month(a.tanggal_lapor),a.status_imun_pernah";
-
-                $query1 = "SELECT";
-                if($kota != null){
-                    $query1 = $query1 ." a.kota,";
-                }
-
-                $query1 = $query1 . " 'Lebih dari 19 Tahun' as Penderita,(CASE WHEN a.status_imun_pernah = 1 THEN 'Pernah Imunisasi' ELSE 'Tidak Pernah Imunisasi' END) as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND a.terima_ads = 0 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL and a.Umur IS NOT NULL ";
-
-                if($provinsi != null){
-                    $query1 = $query1 ." and b.id_provinsi=$provinsi";
-                }
-
-                if($kota != null){
-                    $query1 = $query1 ." and c.id_kota=$kota";
-                }
-
-                $query1 = $query1 . " GROUP BY month(a.tanggal_lapor),a.status_imun_pernah";
-                $string = $query.' UNION '.$query1;
-                $hasil = $this->db->query($string);
-
-                if($hasil->num_rows() > 0){
-                    return $hasil->result();
-                } else{
-                    return false;
-                }
-            }
-        }
-
-        /*public function get_penderita($provinsi,$kota){
-            $query10 = 'SELECT "Kurang dari 19 Tahun" as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL GROUP BY month(a.tanggal_lapor) UNION SELECT "Lebih dari 19 Tahun" as Status, month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL GROUP BY month(a.tanggal_lapor)';
-
-            $query11 = 'SELECT "Kurang dari 19 Tahun" as Status,(CASE WHEN terima_ADS = 1 THEN 'Terima ADS' ELSE 'Tidak Terima ADS' END) as Terima_ADS,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND umur IS NOT NULL GROUP BY a.terima_ads,month(a.tanggal_lapor) UNION SELECT "Lebih dari 19 Tahun" as Status,(CASE WHEN terima_ADS = 1 THEN 'Terima ADS' ELSE 'Tidak Terima ADS' END) as Terima_ADS,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND umur IS NOT NULL GROUP BY a.terima_ads,month(a.tanggal_lapor)';
-
-            $query12 = 'SELECT 'Kurang dari 19 tahun' as Umur,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND a.rekom_ads = 0 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL UNION SELECT 'Lebih dari 19 tahun' as Umur,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND a.rekom_ads = 0 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL AND a.umur IS NOT NULL';
-
-            $query13 = 'SELECT "Kurang dari 19 Tahun" as Penderita,(CASE WHEN a.status_imun_pernah = 1 THEN 'Pernah Imunisasi' ELSE 'Tidak Pernah Imunisasi' END) as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND a.terima_ads = 1 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL and a.Umur IS NOT NULL GROUP BY month(a.tanggal_lapor),a.status_imun_pernah UNION SELECT "Lebih dari 19 Tahun" as Penderita,(CASE WHEN a.status_imun_pernah = 1 THEN 'Pernah Imunisasi' ELSE 'Tidak Pernah Imunisasi' END) as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND a.terima_ads = 1 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL and a.Umur IS NOT NULL GROUP BY month(a.tanggal_lapor),a.status_imun_pernah';
-
-            $query14 = 'SELECT "Kurang dari 19 Tahun" as Penderita,(CASE WHEN a.status_imun_pernah = 1 THEN 'Pernah Imunisasi' ELSE 'Tidak Pernah Imunisasi' END) as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur <= 19 AND a.terima_ads = 0 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL and a.Umur IS NOT NULL GROUP BY month(a.tanggal_lapor),a.status_imun_pernah UNION SELECT "Lebih dari 19 Tahun" as Penderita,(CASE WHEN a.status_imun_pernah = 1 THEN 'Pernah Imunisasi' ELSE 'Tidak Pernah Imunisasi' END) as Status,month(tanggal_lapor) as Bulan,COUNT(*) as Jumlah FROM `db_penderita_2018` a LEFT JOIN `db_provinsi` b ON a.provinsi = b.nama_provinsi LEFT JOIN db_kota c ON a.kota = c.nama_kota LEFT JOIN db_kecamatan d ON a.kecamatan = d.nama_kecamatan LEFT JOIN db_desa e ON a.desa = e.nama_desa where a.umur > 19 AND a.terima_ads = 0 AND month(a.tanggal_lapor) IS NOT NULL AND a.kota IS NOT NULL and a.Umur IS NOT NULL GROUP BY month(a.tanggal_lapor),a.status_imun_pernah';
-        }*/
-    }
+	
+	public function login($username,$password){
+
+		$query = $this->db->get_where('tb_admin', array('username' => $username,'password' => $password));
+		return $query->result();
+	}
+
+	public function cek_unit($unit){
+
+		$query = $this->db->query("SELECT * FROM tb_pegawai WHERE sitacode='$unit' AND level!='STAFF'");
+		return $query->result();
+	}
+
+	public function cek_pegawai($email){
+
+		$query = $this->db->query("SELECT * FROM tb_pegawai WHERE email='$email'");
+		return $query->result();
+	}
+
+	public function pendaftaran($daftar){
+		//Quert insert into
+		$this->db->insert('tb_pegawai', $daftar);
+	}
+
+	function plot_adkar($mine) {
+		$this->db->query("SET SQL_BIG_SELECTS=1");
+ 		$query = $this->db->query("SELECT ROUND(AVG((nilai/jumlah)*100)) AS score, nama_kategori FROM tb_penilaian a LEFT JOIN child_question b ON a.id_question = b.id_child LEFT JOIN survey_kategori c ON b.kategori = c.id_kategori LEFT JOIN form d ON b.id_form = d.id_form LEFT JOIN survey_type e ON d.form_type = e.id_survey LEFT JOIN tb_pegawai f ON a.responden = f.nopeg WHERE f.nopeg = $mine AND e.id_survey=2 GROUP BY nama_kategori");
+		if($query->num_rows() > 0) {
+			return $query->result();
+		}
+		else{
+			return array();
+		}
+ 	}
+
+ 	function avg_adkar($mine) {
+ 		$query = $this->db->query("SELECT AVG(f.score) AS avg_score FROM (SELECT ROUND(AVG((nilai/jumlah)*100)) AS score, nama_kategori FROM tb_penilaian a LEFT JOIN child_question b ON a.id_question = b.id_child LEFT JOIN survey_kategori c ON b.kategori = c.id_kategori LEFT JOIN form d ON b.id_form = d.id_form LEFT JOIN survey_type e ON d.form_type = e.id_survey LEFT JOIN tb_pegawai f ON a.responden = f.nopeg WHERE f.nopeg = $mine AND e.id_survey=2 GROUP BY nama_kategori) f ");
+		if($query->num_rows() > 0) {
+			return $query->result();
+		}
+		else{
+			return array();
+		}
+ 	}
+
+ 	function ketercapaian_360($mine) {
+ 		$query1 = $this->db->query("SELECT ROUND(AVG((nilai/jumlah)*100)) AS myscore1 FROM tb_penilaian a LEFT JOIN child_question b ON a.id_question = b.id_child LEFT JOIN survey_kategori c ON b.kategori = c.id_kategori LEFT JOIN form d ON b.id_form = d.id_form LEFT JOIN survey_type e ON d.form_type = e.id_survey LEFT JOIN tb_pegawai f ON a.responden = f.nopeg WHERE f.nopeg = $mine AND e.id_survey=3 AND input=1");
+ 		if($query1->num_rows() > 0) {
+			$q1=$query1->result();
+		}
+		else{
+			$q1=0;
+		}
+ 		
+ 		$query2 = $this->db->query("SELECT ROUND(AVG((nilai/jumlah)*100)) AS myscore2 FROM tb_penilaian a LEFT JOIN child_question b ON a.id_question = b.id_child LEFT JOIN survey_kategori c ON b.kategori = c.id_kategori LEFT JOIN form d ON b.id_form = d.id_form LEFT JOIN survey_type e ON d.form_type = e.id_survey LEFT JOIN tb_pegawai f ON a.responden = f.nopeg WHERE f.nopeg = $mine AND e.id_survey=3 AND input=2");
+ 		if($query2->num_rows() > 0) {
+			$q2=$query2->result();
+		}
+		else{
+			$q2=0;
+		}
+ 		
+ 		$hasil1=$q1[0]->myscore1;
+ 		$hasil2=$q2[0]->myscore2;
+ 		$total=($hasil1*0.4)+($hasil2*0.6);
+		return $total;
+ 	}
+
+ 	function engagement_score($mine) {
+ 		$query = $this->db->query("SELECT ROUND(AVG((nilai/jumlah)*100)) AS myscore FROM tb_penilaian a LEFT JOIN child_question b ON a.id_question = b.id_child LEFT JOIN survey_kategori c ON b.kategori = c.id_kategori LEFT JOIN form d ON b.id_form = d.id_form LEFT JOIN survey_type e ON d.form_type = e.id_survey LEFT JOIN tb_pegawai f ON a.responden = f.nopeg WHERE f.nopeg=$mine AND e.id_survey=1");
+		if($query->num_rows() > 0) {
+			return $query->result();
+		}
+		else{
+			return array();
+		}
+ 	}
+
+ 	function engagement_dimensi($mine) {
+ 		$query = $this->db->query("SELECT AVG((nilai/jumlah)*100) AS score, c.nama_kategori FROM tb_penilaian a LEFT JOIN child_question b ON a.id_question = b.id_child LEFT JOIN survey_kategori c ON b.kategori = c.id_kategori LEFT JOIN form d ON b.id_form = d.id_form LEFT JOIN survey_type e ON d.form_type = e.id_survey LEFT JOIN tb_pegawai f ON a.responden = f.nopeg WHERE f.nopeg=$mine AND e.id_survey=1 GROUP BY b.kategori");
+		if($query->num_rows() > 0) {
+			return $query->result();
+		}
+		else{
+			return array();
+		}
+ 	}
+
+ 	function gauge_akselerasi($mine) {
+ 		$query = $this->db->query("SELECT AVG(progres) AS progres from data_akselerasi WHERE nopeg=$mine");
+		if($query->num_rows() > 0) {
+			return $query->result();
+		}
+		else{
+			return array();
+		}
+ 	}
+
+ 	function data_akselerasi($mine) {
+ 		$query = $this->db->query("SELECT * from data_akselerasi WHERE nopeg=$mine");
+		if($query->num_rows() > 0) {
+			return $query->result();
+		}
+		else{
+			return array();
+		}
+ 	}
+
+ 	// -----------------------------------------------------------------------------------------------------------------------
+
+	public function list_survey_type(){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM survey_type");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function list_kategori(){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM survey_kategori");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function list_pertanyaan(){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM child_question a LEFT JOIN parent_question b ON a.parent_id = b.id_parent");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function list_construct(){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM parent_question");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function list_multiple_choice(){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM multiple_choice");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function list_forced_choice(){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM forced_choice");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function ambil_pertanyaan(){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM child_question a ORDER BY a.id_child DESC LIMIT 1");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function data_form(){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM form a LEFT JOIN survey_type b on a.form_type = b.id_survey");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return $a=0;
+		}
+	}
+
+	public function form_360(){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM form a LEFT JOIN survey_type b on a.form_type = b.id_survey WHERE a.form_type=3 ORDER BY id_form DESC LIMIT 1");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return $a=0;
+		}
+	}
+
+	public function list_parent($id_form){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM parent_question where id_form=$id_form");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function list_question($id_form){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM child_question a LEFT JOIN parent_question b ON a.parent_id = b.id_parent where a.id_form=$id_form");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function reset_data() {
+		//Query delete ... where id=...
+		$this->db->query("TRUNCATE TABLE tb_penilaian");
+	}
+
+	public function tambah_forced($data_forced){
+		//Quert insert into
+		$this->db->insert('forced_choice', $data_forced);
+	}
+
+	public function tambah_survey($data_aksi){
+		//Quert insert into
+		$this->db->insert('tb_penilaian', $data_aksi);
+	}
+
+	public function tambah_penilaian_forced($data_aksi){
+		//Quert insert into
+		$this->db->insert('tb_penilaian_forced', $data_aksi);
+	}
+
+	public function tambah_pertanyaan($data_pertanyaan){
+		//Quert insert into
+		$this->db->insert('child_question', $data_pertanyaan);
+	}
+
+	public function tambah_construct($data_pertanyaan){
+		//Quert insert into
+		$this->db->insert('parent_question', $data_pertanyaan);
+	}
+
+	public function add_form($data_form){
+		//Quert insert into
+		$this->db->insert('form', $data_form);
+	}
+
+	public function tambah_pilihan($data_pilihan){
+		//Quert insert into
+		$this->db->insert('multiple_choice', $data_pilihan);
+	}
+
+	public function edit_pilihan($data_pilihan, $id_child){
+		//Quert insert into
+		$this->db->where('id_question', $id_child)
+				 ->update('multiple_choice', $data_pilihan);
+	}
+
+	public function edit_pertanyaan($data_pertanyaan, $id_child){
+		//Quert insert into
+		$this->db->where('id_child', $id_child)
+				 ->update('child_question', $data_pertanyaan);
+	}
+
+	public function edit_construct($data_pertanyaan, $id_parent){
+		//Quert insert into
+		$this->db->where('id_parent', $id_parent)
+				 ->update('parent_question', $data_pertanyaan);
+	}
+
+	public function edit_form($data_form, $id_form){
+		//Quert insert into
+		$this->db->where('id_form', $id_form)
+				 ->update('form', $data_form);
+	}
+
+	public function delete($id_child) {
+		//Query delete ... where id=...
+		$this->db->where('id_child', $id_child)
+				 ->delete('child_question');
+	}
+
+	public function delete_construct($id_parent) {
+		//Query delete ... where id=...
+		$this->db->where('id_parent', $id_parent)
+				 ->delete('parent_question');
+	}
+
+	public function hapus_pilihan($qc) {
+		//Query delete ... where id=...
+		$this->db->where('question', $qc)
+				 ->delete('multiple_choice');
+	}
+
+	public function judul($id_form){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("SELECT * FROM form where id_form = $id_form LIMIT 1");
+		if($hasil->num_rows() > 0){
+			return $hasil->result();
+		} else{
+			return array();
+		}
+	}
+
+	public function delete_akselerasi($mine){
+		//Query mencari record berdasarkan ID
+		$hasil = $this->db->query("DELETE FROM data_akselerasi WHERE nopeg = $mine");
+	}
+
+ 	public function upload_akselerasi($rowData,$mine){
+            $data = array(
+                'id_akselerasi' => $rowData['0'][0],
+                'nopeg'		 	=> $mine,
+                'pelaksana' 	=> $rowData['0'][1],
+                'mission' 		=> $rowData['0'][2],
+                'progres' 		=> $rowData['0'][3]
+            );
+		//Query insert into
+		$this->db->replace('data_akselerasi', $data);
+	}
+
+
+}

@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="<?php echo base_url()?>assets/gi.ico">
-    <title>Sincerity 360</title>
+    <title>Garuda Indonesia Group | Login</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -30,10 +30,10 @@
                 <!--<h1 class="logo-name pull-left" style="padding-left: 30px;">GA</h1>-->
                 <img src="assets/logo.png" class="img-responsive">
             </div>
-            <h2>Garuda Sincerity 360</h2>
+            <h2>Simple Apps</h2>
 
             <p>Login for administrator.</p>
-                <form class="m-t" role="form" action="<?php echo base_url()."admin_login/admin/"?>" method="POST">
+                <form class="m-t" role="form" action="<?php echo base_url()."admin_login/login/"?>" method="POST">
                         <div class="form-group">
                             <div class="hr-line-dashed" style="border-color: #b2b2b2"></div>
                             <input type="text" class="form-control" placeholder="Username" name="username" required="">
@@ -43,6 +43,9 @@
                         </div>
                         <button type="submit" class="btn btn-info block full-width m-b">Login</button>
 
+                        <p class="text-muted text-center">
+                            <small>Masukkan username dan password untuk masuk ke halaman administrator.</small>
+                        </p>
                 </form>
             <div class="hr-line-dashed" style="border-color: #b2b2b2"></div>
             <strong>Copyright</strong> &copy; 2017 Garuda Indonesia. All rights reserved.

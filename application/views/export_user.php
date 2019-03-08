@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="<?php echo base_url()?>assets/gi.ico">
+    <title>Garuda Indonesia Group | Login</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+</head>
+<body style="background-color: #fcfcfc">
+
+    <?php 
+        $mpdf->mirrorMargins = 1;   // Use different Odd/Even headers and footers and mirror margins
+        $header = '
+        <table width="100%" style="border-bottom: 1px solid #000000; vertical-align: bottom; font-family: serif; font-size: 9pt; color: #000088;"><tr>
+        <td width="33%">Left header p <span style="font-size:14pt;">{PAGENO}</span></td>
+        <td width="33%" align="center"><img src="assets/sunset.jpg" width="126px" /></td>
+        <td width="33%" style="text-align: right;"><span style="font-weight: bold;">Right header</span></td>
+        </tr></table>';
+        $headerEven = '
+        <table width="100%" style="border-bottom: 1px solid #000000; vertical-align: bottom; font-family: serif; font-size: 9pt; color: #000088;"><tr>
+        <td width="33%"><span style="font-weight: bold;">Outer header</span></td>
+        <td width="33%" align="center"><img src="assets/sunset.jpg" width="126px" /></td>
+        <td width="33%" style="text-align: right;">Inner header p <span style="font-size:14pt;">{PAGENO}</span></td>
+        </tr></table>';
+        $footer = '<div align="center">See <a href="http://mpdf.github.io">documentation manual</a></div>';
+
+        $html = '
+        <h1>mPDF</h1>
+        <h2>Headers & Footers Method 2</h2>
+        <h3>Odd / Right page</h3>
+        <p>Nulla felis erat, imperdiet eu, ullamcorper non, nonummy quis, elit. Suspendisse potenti. Ut a eros at ligula
+        vehicula pretium. Maecenas feugiat pede vel risus. Nulla et lectus. Fusce eleifend neque sit amet erat. Integer
+        consectetuer nulla non orci. Morbi feugiat pulvinar dolor. Cras odio. Donec mattis, nisi id euismod auctor,
+        neque metus pellentesque risus, at eleifend lacus sapien et risus. Phasellus metus. Phasellus feugiat, lectus ac
+        aliquam molestie, leo lacus tincidunt turpis, vel aliquam quam odio et sapien. Mauris ante pede, auctor ac, suscipit
+        quis, malesuada sed, nulla. Integer sit amet odio sit amet lectus luctus euismod. Donec et nulla. Sed quis orci.</p>
+        <pagebreak />
+        <h3>Even / Left page</h3>
+        <p>Nulla felis erat, imperdiet eu, ullamcorper non, nonummy quis, elit. Suspendisse potenti. Ut a eros at ligula
+        vehicula pretium. Maecenas feugiat pede vel risus. Nulla et lectus. Fusce eleifend neque sit amet erat. Integer
+        consectetuer nulla non orci. Morbi feugiat pulvinar dolor. Cras odio. Donec mattis, nisi id euismod auctor, neque
+        metus pellentesque risus, at eleifend lacus sapien et risus. Phasellus metus. Phasellus feugiat, lectus ac aliquam
+        molestie, leo lacus tincidunt turpis, vel aliquam quam odio et sapien. Mauris ante pede, auctor ac, suscipit quis,
+        malesuada sed, nulla. Integer sit amet odio sit amet lectus luctus euismod. Donec et nulla. Sed quis orci.</p>';
+    ?>
+
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+            <div class="pembuka">
+                <!--<h1 class="logo-name pull-left" style="padding-left: 30px;">GA</h1>-->
+                <img src="assets/logo.png" class="img-responsive">
+            </div>
+            <h2>Employee Engagement</h2>
+
+            <p>Login in. To see your score.</p>
+
+                <form class="m-t" role="form" action="<?php echo base_url()."login/pegawai"?>" method="POST">
+                        <div class="form-group">
+                            <div class="hr-line-dashed" style="border-color: #b2b2b2"></div>
+                            <label>Unit</label>
+                            <input type="text" class="form-control" placeholder="Contoh: JKTID" name="unit" required="">
+                        </div>
+                        <button type="submit" class="btn btn-info block full-width m-b">Login</button>
+
+                        <p class="text-muted text-center">
+                            <small>Masukkan kode unit tempat anda bekerja untuk melihat nilai engagement dari unit anda</small>
+                        </p>
+                </form>
+            <div class="hr-line-dashed" style="border-color: #b2b2b2"></div>
+            <strong>Copyright</strong> &copy; 2017 Garuda Indonesia. All rights reserved.
+    </div>
+
+</body>
+
+</html>
