@@ -66,10 +66,20 @@
                                 </div>  
                                 
                             </div>
-                            <div class="ibox float-e-margins" >
-                                <div class="ibox-content">
-                                    a
+                            <div class="row">
+                            <?php for ($i=0; $i < count($form) ; $i++) { ?>
+                            
+                                <div class="col-md-6">
+                                    <div class="ibox float-e-margins" >
+                                        <div class="ibox-content">
+                                            <h3><b><?php echo $form[$i]->title ?></b></h3>
+                                            <p><a href="<?php echo base_url()?>user/open/<?php echo $form[$i]->link ?>">http://localhost/user/open/<?php echo $form[$i]->link ?></a></p>
+                                            <p><?php echo $form[$i]->description ?></p>
+                                        </div>
+                                    </div>
                                 </div>
+                            
+                            <?php } ?>
                             </div>
                         </div>
 

@@ -35,4 +35,9 @@ class model_admin extends CI_Model {
         $this->db->delete($table);
     }
 
+    public function form_list() {
+		$query = $this->db->query("SELECT * FROM tb_form WHERE isActive='1'");
+		return $query->result();
+	}
+
 }

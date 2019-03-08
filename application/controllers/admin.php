@@ -14,13 +14,13 @@ class admin extends CI_Controller {
 	}
 	public function index()
 	{		
-		// $data['form'] = $this->model_users->form_list();
+		$data['form'] = $this->model_admin->form_list();
 		// $data['list_construct'] = $this->model_users->list_construct();
 		// $data['list_pertanyaan'] = $this->model_users->list_pertanyaan();
 		// $data['list_multiple_choice'] = $this->model_users->list_multiple_choice();
 		// $data['list_forced_choice'] = $this->model_users->list_forced_choice();
 		// $data['list_kategori'] = $this->model_users->list_kategori();
-		$this->load->view('admin/form_list');
+		$this->load->view('admin/form_list',$data);
 	}
 
 	public function add_form(){
@@ -32,20 +32,20 @@ class admin extends CI_Controller {
 		}
 		else {
 			$status = $this->input->post('status');
-			$form_code  = getRandomString();
+			$form_code  = $this->getRandomString();
 
 			//eksekusi query insert
 			$data_form = array(
-				'form_code'		=> $form_code,
+				'formCode'		=> $form_code,
 				'link'			=> $this->input->post('link'),
 				'title'			=> $this->input->post('title'),
 				'description'	=> $this->input->post('description'),
 				'isActive'		=> $status,
 				'createdDate'	=> date("Y-m-d H:i:s"),
-				'createdBy'		=> 'AAA',
+				'createdBy'		=> $this->session->userdata('username'),
 			);
 
-			$this->model_users->insertData('tb_form',$data_form);
+			$this->model_admin->insertData('tb_form',$data_form);
 			redirect('admin');
 
 		}
