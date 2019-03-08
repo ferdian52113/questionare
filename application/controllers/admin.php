@@ -15,7 +15,7 @@ class admin extends CI_Controller {
 	}
 	public function index()
 	{		
-		$this->load->view('admin/admin-dashboard');
+		$this->load->view('admin/list-question');
 	}
 
 	
