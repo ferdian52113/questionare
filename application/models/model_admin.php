@@ -1,18 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class model_admin extends CI_Model {
-	
-<<<<<<< HEAD
-	public function login($username,$password){
 
-		$query = $this->db->get_where('tb_admin', array('username' => $username,'password' => $password));
-		return $query->result();
-	}
-
-
-
-}
-=======
 	public function checkAccount($username,$password) {
         $query = "select username from tb_user where username=? and role=1";
         $cek_awal = $this->db->query($query, array($username))->row();
@@ -48,4 +37,3 @@ class model_admin extends CI_Model {
 
 
 }
->>>>>>> 33e580557ab7d64d64fac50038ca123b13276f5b

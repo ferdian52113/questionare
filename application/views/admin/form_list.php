@@ -12,7 +12,7 @@
     <link href="<?php echo base_url()?>font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="<?php echo base_url()?>css/animate.css" rel="stylesheet">
     <link href="<?php echo base_url()?>css/style.css" rel="stylesheet">
-    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="<?php echo base_url()?>css/plugins/iCheck/custom.css" rel="stylesheet">
 
 </head>
 
@@ -40,7 +40,7 @@
                                             <input type="text" class="form-control" name="title" required="">
                                             <br>
                                             <label>Link</label>
-                                            <small>http://localhost/user/open/{<i> your url </i> }</small>
+                                            <p><small> http://localhost/user/open/ {<i> your url </i> } </small></p>
                                             <input type="text" class="form-control" name="link" required="">
                                             <br>
                                             <label>Description</label>
@@ -102,10 +102,10 @@
 <script src="<?php echo base_url()?>js/plugins/morris/raphael-2.1.0.min.js"></script>
 <script src="<?php echo base_url()?>js/plugins/morris/morris.js"></script>
 
-<script src="js/plugins/dataTables/datatables.min.js"></script>
+<script src="<?php echo base_url()?>js/plugins/dataTables/datatables.min.js"></script>
 
 <!-- iCheck -->
-    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <script src="<?php echo base_url()?>js/plugins/iCheck/icheck.min.js"></script>
         <script>
             $(document).ready(function () {
                 $('.i-checks').iCheck({

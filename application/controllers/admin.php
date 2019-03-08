@@ -33,7 +33,6 @@ class admin extends CI_Controller {
 		else {
 			$status = $this->input->post('status');
 			$form_code  = getRandomString();
-			$link
 
 			//eksekusi query insert
 			$data_form = array(
@@ -46,7 +45,7 @@ class admin extends CI_Controller {
 				'createdBy'		=> 'AAA',
 			);
 
-			$this->model_users->add_form($data_form);
+			$this->model_users->insertData('tb_form',$data_form);
 			redirect('admin');
 
 		}
@@ -71,7 +70,7 @@ class admin extends CI_Controller {
 		$data['list_construct'] = $this->model_users->list_construct();
 		$this->load->view('admin/list_construct',$data);
 	}
-	
+
 	public function edit_pertanyaan($id_child){
 		$this->form_validation->set_rules('parent_id', 'Construct');
 		$this->form_validation->set_rules('question', 'Pertanyaan');
