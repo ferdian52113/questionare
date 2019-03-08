@@ -2,26 +2,15 @@
 
 class admin extends CI_Controller {
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -  
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in 
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see http://codeigniter.com/user_guide/general/urls.html
-	 */
 	public function __construct()
 	{
 		parent::__construct();
-		
+
 		$this->load->model('model_admin');
+
+		if ($this->session->userdata('role')!=1) {
+            redirect('admin_login');
+        }
 	}
 	public function index()
 	{		
@@ -75,23 +64,6 @@ class admin extends CI_Controller {
 	}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// --------------------------------------------------------------
-
 	public function construct()
 	{		
 		//print_r($data);
@@ -99,226 +71,7 @@ class admin extends CI_Controller {
 		$data['list_construct'] = $this->model_users->list_construct();
 		$this->load->view('admin/list_construct',$data);
 	}
-
-	public function forms()
-	{	
-		$data['list_survey_type'] = $this->model_users->list_survey_type();	
-		$data['data_form'] = $this->model_users->data_form();
-		//print_r($data);
-		$this->load->view('admin/form_builder',$data);
-	}
-
-	public function dashboard_survey()
-	{		
-		$data['judul']  = $this->model_users->judul();
-		$data['list_parent']  = $this->model_users->list_parent();
-		$data['list_pertanyaan'] = $this->model_users->list_pertanyaan();
-		$data['data_dashboard'] = $this->model_users->data_dashboard();
-		//print_r($data);
-		$this->load->view('admin/dashboard_survey',$data);
-	}
-
-	public function delete($id_child){
-		$this->model_users->delete($id_child);
-		redirect('admin');
-	}
-
-	public function delete_construct($id_parent){
-		$this->model_users->delete_construct($id_parent);
-		redirect('admin/construct');
-	}
-
-	public function data(){
-		$this->load->view('admin/data');
-	}
-
-	public function reset(){
-		$this->model_users->reset_data();
-		redirect('admin/data');
-	}
-
-	public function tambah_pertanyaan(){
-		$this->form_validation->set_rules('parent_id', 'Construct');
-		$this->form_validation->set_rules('question', 'Pertanyaan');
-		$this->form_validation->set_rules('type', 'Tipe Pertanyaan');
-
-		// $fd=$this->input->post();
-		// print_r($fd);
-		// exit();
-		if ($this->form_validation->run() == FALSE){
-			redirect('admin');
-		}
-		else {
-			if($_FILES['userfile']['name'] != NULL){
-				//form sumbit dengan gambar diisi
-				//load uploading file library
-				 $config['upload_path']   = './uploads/'; 
-		         $config['allowed_types'] = 'gif|jpg|png'; 
-		         $config['max_size']	= '2048';
-				
-				$this->load->library('upload', $config);
-				$this->upload->initialize($config);
-					if ( !$this->upload->do_upload()){
-						$error = array('error' => $this->upload->display_errors());
-        			    var_dump($error);
-					}
-					else {
-						$gambar = $this->upload->data();
-						if ($this->input->post('type')=='multiple choice') {
-							//eksekusi query insert
-							$data_pertanyaan = array(
-								'id_form'		=> $this->input->post('id_form'),
-								'parent_id'		=> $this->input->post('parent_id'),
-								'question'		=> $this->input->post('question'),
-								'type'			=> $this->input->post('type'),
-								'userfile'		=> $gambar['file_name'],
-								'jumlah'		=> $this->input->post('jumlah'),
-							);
-							$this->model_users->tambah_pertanyaan($data_pertanyaan);
-							$id_choice=$this->model_users->ambil_pertanyaan();
-								$data_pilihan= array(
-									'id_question'	=> $id_choice[0]->id_child,
-									'choice1'		=> $this->input->post('tanya1'),
-									'choice2'		=> $this->input->post('tanya2'),
-									'choice3'		=> $this->input->post('tanya3'),
-									'choice4'		=> $this->input->post('tanya4'),
-									'answer'		=> $this->input->post('jawaban'),
-								);
-								$this->model_users->tambah_pilihan($data_pilihan);
-						} elseif($this->input->post('type')=='forced choice') {
-								//eksekusi query insert
-							$data_pertanyaan = array(
-								'id_form'		=> $this->input->post('id_form'),
-								'parent_id'		=> $this->input->post('parent_id'),
-								'question'		=> $this->input->post('perintah'),
-								'type'			=> $this->input->post('type'),
-								'userfile'		=> $gambar['file_name'],
-								'jumlah'		=> $this->input->post('jumlah'),
-							);
-							$this->model_users->tambah_pertanyaan($data_pertanyaan);
-							$data_id=$this->model_users->ambil_pertanyaan();
-
-								$data_forced= array(
-									'id_child'		=> $data_id->id_child,
-									'pertanyaan1'	=> $this->input->post('pertanyaan1'),
-									'kategori1'		=> $this->input->post('kategori1'),
-									'pertanyaan2'	=> $this->input->post('pertanyaan2'),
-									'kategori2'		=> $this->input->post('kategori2'),
-								);
-								$this->model_users->tambah_forced($data_pilihan);
-						} elseif($this->input->post('type')=='skala') {
-								//eksekusi query insert
-							$data_pertanyaan = array(
-								'id_form'		=> $this->input->post('id_form'),
-								'parent_id'		=> $this->input->post('parent_id'),
-								'question'		=> $this->input->post('question'),
-								'type'			=> $this->input->post('type'),
-								'kategori'		=> $this->input->post('kategori'),
-								'userfile'		=> $gambar['file_name'],
-								'jumlah'		=> $this->input->post('jumlah'),
-							);
-							$this->model_users->tambah_pertanyaan($data_pertanyaan);
-						} else {
-							$data_pertanyaan = array(
-								'id_form'		=> $this->input->post('id_form'),
-								'parent_id'		=> $this->input->post('parent_id'),
-								'question'		=> $this->input->post('question'),
-								'type'			=> $this->input->post('type'),
-								'userfile'		=> $gambar['file_name'],
-								'jumlah'		=> $this->input->post('jumlah'),
-							);
-							$this->model_users->tambah_pertanyaan($data_pertanyaan);
-						}
-						
-						redirect('admin');
-					}
-			} else {
-						if ($this->input->post('type')=='multiple choice') {
-							//eksekusi query insert
-							$data_pertanyaan = array(
-								'id_form'		=> $this->input->post('id_form'),
-								'parent_id'		=> $this->input->post('parent_id'),
-								'question'		=> $this->input->post('question'),
-								'type'			=> $this->input->post('type'),
-								'jumlah'		=> $this->input->post('jumlah'),
-							);
-							$this->model_users->tambah_pertanyaan($data_pertanyaan);
-							$id_choice=$this->model_users->ambil_pertanyaan();
-								$data_pilihan= array(
-									'id_question'	=> $id_choice[0]->id_child,
-									'choice1'		=> $this->input->post('tanya1'),
-									'choice2'		=> $this->input->post('tanya2'),
-									'choice3'		=> $this->input->post('tanya3'),
-									'choice4'		=> $this->input->post('tanya4'),
-									'answer'		=> $this->input->post('jawaban'),
-								);
-								$this->model_users->tambah_pilihan($data_pilihan);
-						} elseif($this->input->post('type')=='forced choice') {
-								//eksekusi query insert
-							$data_pertanyaan = array(
-								'id_form'		=> $this->input->post('id_form'),
-								'parent_id'		=> $this->input->post('parent_id'),
-								'question'		=> $this->input->post('perintah'),
-								'type'			=> $this->input->post('type'),
-								'jumlah'		=> $this->input->post('jumlah'),
-							);
-							$this->model_users->tambah_pertanyaan($data_pertanyaan);
-							$data_id=$this->model_users->ambil_pertanyaan();
-
-								$data_forced= array(
-									'id_child'		=> $data_id[0]->id_child,
-									'pertanyaan1'	=> $this->input->post('pertanyaan1'),
-									'kategori1'		=> $this->input->post('kategori1'),
-									'pertanyaan2'	=> $this->input->post('pertanyaan2'),
-									'kategori2'		=> $this->input->post('kategori2'),
-								);
-								$this->model_users->tambah_forced($data_forced);
-						} elseif($this->input->post('type')=='skala') {
-								//eksekusi query insert
-							$data_pertanyaan = array(
-								'id_form'		=> $this->input->post('id_form'),
-								'parent_id'		=> $this->input->post('parent_id'),
-								'question'		=> $this->input->post('question'),
-								'type'			=> $this->input->post('type'),
-								'kategori'		=> $this->input->post('kategori'),
-								'jumlah'		=> $this->input->post('jumlah'),
-							);
-							$this->model_users->tambah_pertanyaan($data_pertanyaan);
-						} else {
-							$data_pertanyaan = array(
-								'id_form'		=> $this->input->post('id_form'),
-								'parent_id'		=> $this->input->post('parent_id'),
-								'question'		=> $this->input->post('question'),
-								'type'			=> $this->input->post('type'),
-								'jumlah'		=> $this->input->post('jumlah'),
-							);
-							$this->model_users->tambah_pertanyaan($data_pertanyaan);
-						}
-						
-						redirect('admin');
-			}
-
-		}
-	}
-
-	public function tambah_construct(){
-		$this->form_validation->set_rules('parent_name', 'Construct');
-			
-		if ($this->form_validation->run() == FALSE){
-			redirect('admin/construct');
-		}
-		else {
-			//eksekusi query insert
-			$data_pertanyaan = array(
-				'id_form'		=> $this->input->post('id_form'),
-				'parent_name'		=> $this->input->post('parent_name'),
-			);
-			$this->model_users->tambah_construct($data_pertanyaan);
-			redirect('admin/construct');
-
-		}
-	}
-
+	
 	public function edit_pertanyaan($id_child){
 		$this->form_validation->set_rules('parent_id', 'Construct');
 		$this->form_validation->set_rules('question', 'Pertanyaan');
@@ -521,13 +274,9 @@ class admin extends CI_Controller {
 			//redirect('admin/data'); 
 		}
 	}
-	
 	function logout()
 	{
 		$this->session->sess_destroy();
 		redirect('admin_login');
 	}
 }
-
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
