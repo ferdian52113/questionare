@@ -8233,3 +8233,16 @@ body.md-skin {
     margin: 0;
   }
 }
+
+.sectionDescription {
+  border-style: none solid none;
+  padding-top: 1px;
+}
+
+.sectionTitle {
+  padding-bottom: 1px;
+}
+
+.blue-bg {
+  background-color: #66c2ff;
+}
