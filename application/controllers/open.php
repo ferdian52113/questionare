@@ -12,6 +12,7 @@ class Open extends CI_Controller {
         $this->load->library('form_validation');
 		$this->load->model('model_questionare');
 		$this->load->model('model_admin');
+		date_default_timezone_set("Asia/Jakarta");
 	}
 	public function index()
 	{

@@ -11,6 +11,8 @@ class User extends CI_Controller {
         $this->load->library('image_lib');
         $this->load->library('form_validation');
 		$this->load->model('model_users');
+		$this->load->model('model_questionare');
+		date_default_timezone_set("Asia/Jakarta");
 	}
 	public function index()
 	{
@@ -788,6 +790,77 @@ class User extends CI_Controller {
 		}
 	}
 
+
+	public function save()
+	{
+		$data = array('success' => false, 'messages' => array());
+
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules("1", "1", "required");
+		$this->form_validation->set_rules("email", "Email", "trim|required|valid_email");
+		$this->form_validation->set_rules("password", "Password", "trim|required");
+		$this->form_validation->set_rules("password_confirm", "Password Confirm", "trim|required|matches[password]");
+		$this->form_validation->set_error_delimiters('<p class="text-danger">', '</p>');
+		if ($this->form_validation->run()) {
+			$data['success'] = true;
+		}
+		else {
+			foreach ($_POST as $key => $value) {
+				$data['messages'][$key] = form_error($key);
+			}
+		}
+
+		echo json_encode($data);
+	}
+
+	////
+	public function tambah()
+	{
+		//print_r($this->input->get());
+		$formCode=$this->input->post('formCode');
+		$sectionID=$this->input->post('sectionID');
+		$responseID=$this->input->post('responseID');
+		$dtQuestion = json_decode($this->model_questionare->getDataTableQuestion2('formCode',$formCode,'sectionID',$sectionID,'tb_question'));
+		$question = $dtQuestion->data;
+		$size = sizeof($question);
+		//Insert tb_response
+		$data_responden = array( 
+			'responseID' => $responseID,
+			'formCode' => $formCode,
+			'createdDate' => date("Y-m-d H:i:s"),
+		);
+		$data_jabawan_temp = array( 
+			'responseID' => $responseID,
+			'formCode' => $formCode,
+			'sectionID' => $sectionID,
+		);
+		$this->model_questionare->insertSelectData('tb_response', $data_responden);
+		$this->model_questionare->deleteData2('tb_answer_temp',$data_jabawan_temp);
+		for ($i=0; $i < $size; $i++) {
+			$data_jabawan = array(
+				'responseID'				=> $responseID,
+				'sectionID'					=> $sectionID,
+				'formCode'					=> $formCode,
+				'questionID'				=> $question[$i]->questionID,
+				'value'						=> $this->input->post($question[$i]->questionID) == "other"? $this->input->post($question[$i]->questionID.'-other') : $this->input->post($question[$i]->questionID),
+				'createdDate'				=> date("Y-m-d H:i:s"),
+			);
+			$this->model_questionare->insertData('tb_answer_temp', $data_jabawan);
+		}
+		$data = array('success' => true);
+		echo json_encode($data);
+	}
+
+	function getRandomString($length = 10) {
+	    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	    $string = '';
+
+	    for ($i = 0; $i < $length; $i++) {
+	        $string .= $characters[mt_rand(0, strlen($characters) - 1)];
+	    }
+
+	    return $string;
+	}
 
 	
 }

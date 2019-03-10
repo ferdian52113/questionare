@@ -7,7 +7,7 @@ class admin extends CI_Controller {
 		parent::__construct();
 
 		$this->load->model('model_admin');
-
+		date_default_timezone_set("Asia/Jakarta");
 		if ($this->session->userdata('role')!=1) {
             redirect('admin_login');
         }

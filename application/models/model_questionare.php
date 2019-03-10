@@ -32,7 +32,16 @@ class model_questionare extends CI_Model {
     }
 
     public function getDataTableQuestion($param, $value, $table) {
-        $query=$this->db->query("SELECT * FROM $table WHERE $param='$value' ORDER BY formCode,SectionID");
+        $query=$this->db->query("SELECT * FROM $table WHERE $param='$value' AND rowStatus=0 ORDER BY formCode,SectionID");
+        if($query->num_rows() > 0){
+            return json_encode(['status'=>true,'data'=>$query->result()]);
+        } else{
+            return json_encode(['status'=>false]);
+        }
+    }
+
+    public function getDataTableQuestion2($param, $value,$param2, $value2, $table) {
+        $query=$this->db->query("SELECT * FROM $table WHERE $param='$value' AND $param2 = '$value2' AND rowStatus=0 ORDER BY formCode,SectionID");
         if($query->num_rows() > 0){
             return json_encode(['status'=>true,'data'=>$query->result()]);
         } else{
@@ -41,11 +50,22 @@ class model_questionare extends CI_Model {
     }
 
     public function getDataTableQuestionDetail($value) {
-        $query=$this->db->query("SELECT * FROM tb_question_detail qd INNER JOIN tb_question q ON qd.questionID=q.questionID WHERE q.formCode='$value'");
+        $query=$this->db->query("SELECT * FROM tb_question_detail qd INNER JOIN tb_question q ON qd.questionID=q.questionID WHERE q.formCode='$value' AND q.rowStatus =0");
         if($query->num_rows() > 0){
             return json_encode(['status'=>true,'data'=>$query->result()]);
         } else{
             return json_encode(['status'=>false]);
+        }
+    }
+
+    public function insertSelectData($table, $data) {
+        $formCode = $data['formCode'];
+        $responseID = $data['responseID'];
+        $query=$this->db->query("SELECT * FROM $table WHERE responseID='$responseID' AND formCode='$formCode'");
+        if($query->num_rows() > 0){
+
+        } else{
+            $this->db->insert($table, $data);
         }
     }
 
@@ -61,6 +81,13 @@ class model_questionare extends CI_Model {
     public function deleteData($param, $value, $table) {
         $this->db->where($param, $value);
         $this->db->delete($table);
+    }
+
+    public function deleteData2($table,$data) {
+        $formCode = $data['formCode'];
+        $responseID = $data['responseID'];
+        $sectionID = $data['sectionID'];
+        $this->db->query("DELETE FROM $table WHERE formCode='$formCode' AND sectionID='$sectionID' AND responseID='$responseID'");
     }
 	
 
