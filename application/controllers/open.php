@@ -48,7 +48,7 @@ class Open extends CI_Controller {
 		$data['section'] = $dtSection->status==true? $dtSection->data : null;
 		$data['question'] = $dtQuestion->status==true? $dtQuestion->data : null;
 		$data['questionDetail'] = $dtQuestionDetail->status==true? $dtQuestionDetail->data : null;
-		$this->load->view('template_question',$data);
+		$this->load->view('template_question-2',$data);
 		//print_r($data['question']);
 	}
 
