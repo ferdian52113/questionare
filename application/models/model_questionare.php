@@ -58,6 +58,14 @@ class model_questionare extends CI_Model {
         }
     }
 
+    public function moveUpdateData($data) {
+        $formCode = $data['formCode'];
+        $responseID = $data['responseID'];
+        $sectionID = $data['sectionID'];
+        $this->db->query("UPDATE tb_response SET status=1 WHERE formCode='$formCode' AND  responseID='$responseID'");
+        $this->db->query("INSERT INTO tb_answer (responseID, formCode, sectionID, questionID, question_detailID, value, createdDate) SELECT responseID, formCode, sectionID, questionID, question_detailID, value, createdDate FROM tb_answer_temp WHERE formCode='$formCode' AND responseID='$responseID'");
+    }
+
     public function insertSelectData($table, $data) {
         $formCode = $data['formCode'];
         $responseID = $data['responseID'];

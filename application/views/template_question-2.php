@@ -57,8 +57,8 @@ background-size: cover;
                                             </div>  
                                         <?php } ?>
                                     </div>
-                                    <form id="formSection-<?php echo $section[$i]->sectionID?>" data-sectionID="<?php echo $section[$i]->sectionID?>" action="<?php echo base_url()?>user/tambah" method="post" accept-charset="utf-8" enctype="multipart/form-data">
-                                        <input type="hidden" name="formCode" value="<?php echo $form[0]->formCode?>">
+                                    <form id="formSection-<?php echo $section[$i]->sectionID?>" data-sectionID="<?php echo $section[$i]->sectionID?>" action="<?php echo $section[$i]->sectionID==$section[count($section)-1]->sectionID ? base_url()."open/save/final" : base_url()."open/save"?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+                                        <input type="hidden" name="formCode" name="formCode" value="<?php echo $form[0]->formCode?>">
                                         <input type="hidden" class="responseID" name="responseID" value="">
                                         <input type="hidden" name="sectionID" value="<?php echo $section[$i]->sectionID?>">
                                         <div class="ibox-content" id="questionContainer-<?php echo $section[$i]->sectionID?>" style="margin-bottom: 25px;<?php echo ($section[$i]->sectionID < 1)? "display: none" : ""?>">
@@ -227,7 +227,7 @@ background-size: cover;
     <script>
         $(document).ready(function () {
             var count = <?php echo count($section)?>;
-
+            var lastSection = <?php echo $section[count($section)-1]->sectionID?>;
             init();
 
             for (var i = 1; i <= count; i++) {
@@ -235,7 +235,8 @@ background-size: cover;
                 e.preventDefault();
 
                 var me = $(this);
-
+                var sec  = me.attr('data-sectionID');
+                var formCode=$("input[name=formCode]").val();
                 // perform ajax
                 $.ajax({
                     url: me.attr('action'),
@@ -244,23 +245,11 @@ background-size: cover;
                     dataType: 'json',
                     success: function(response) {
                         if (response.success == true) {
-                            // if success we would show message
-                            // and also remove the error class
-                            $('#the-message').append('<div class="alert alert-success">' +
-                                '<span class="glyphicon glyphicon-ok"></span>' +
-                                ' Data has been saved' +
-                                '</div>');
-                            $('.form-group').removeClass('has-error')
-                            .removeClass('has-success');
-                            $('.text-danger').remove();
-
-                            // close the message after seconds
-                            $('.alert-success').delay(500).show(10, function() {
-                                $(this).delay(3000).hide(10, function() {
-                                    $(this).remove();
-                                });
-                            })
-                            showhide(me.attr('data-sectionID'));
+                            if(sec==lastSection){
+                                window.location = "<?php echo base_url() . "open/done/" ?>"+formCode;
+                            } else {
+                                showhide(me.attr('data-sectionID'));
+                            }
                         }
                         else {
                             alert("Please refresh page");
@@ -299,6 +288,8 @@ background-size: cover;
 
                 $('#'+show).show();
                 $('#'+hide).hide();
+
+                $('html, body').animate({scrollTop: $("#" + show).offset().top}, 200);
             }
 
             $(".prev-button").on('click', function (e) {
@@ -307,6 +298,8 @@ background-size: cover;
 
                 $('#'+show).show();
                 $('#'+hide).hide();
+
+                $('html, body').animate({scrollTop: $("#" + show).offset().top}, 200);
             });
 
 
