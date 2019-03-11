@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>INSPINIA | 404 Error</title>
+    <title>DMI</title>
 
     <link href="<?php echo base_url()?>css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo base_url()?>font-awesome/css/font-awesome.css" rel="stylesheet">

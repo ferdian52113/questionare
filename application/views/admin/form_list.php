@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Form Creator</title>
+    <title>DMI | ADMIN</title>
 
     <link href="<?php echo base_url()?>css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo base_url()?>font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -42,7 +42,7 @@
                                             <input type="text" class="form-control" name="title" required="">
                                             <br>
                                             <label>Link</label>
-                                            <p><small> http://localhost/user/open/ {<i> your url </i> } </small></p>
+                                            <p><small> <?php echo base_url("open/questioner/")?> {<i>your url</i> } </small></p>
                                             <input type="text" class="form-control" name="link" required="">
                                             <br>
                                             <label>Description</label>
@@ -66,21 +66,20 @@
                                 <div class="ibox-title">
                                     <h5>My Form</h5>
                                 </div>  
-                                
                             </div>
                             <div class="row">
                             <?php for ($i=0; $i < count($form) ; $i++) { ?>
                             
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="ibox float-e-margins" >
                                         <div class="ibox-content">
                                             <div>
-                                                <h3><b><?php echo $form[$i]->title ?></b></h3>
-                                                <p><a href="<?php echo base_url()?>user/open/<?php echo $form[$i]->link ?>">http://localhost/user/open/<?php echo $form[$i]->link ?></a></p>
+                                                <h3><b><?php echo $form[$i]->title?>  </b><span class="label label<?php echo $form[$i]->isActive==1? '-success">Aktif' : '-danger">Tidak Aktif'?></span></h3>
+                                                <p><a href="<?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?>"><?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?></a></p>
                                                 <p><?php echo $form[$i]->description ?></p>
                                                 <button class="btn btn-xs btn-warning"><i class="fa fa-pencil "></i> Edit Form</button>
                                                 <button class="btn btn-xs btn-danger"><i class="fa fa-trash "></i> Hapus Form</button>
-                                                <button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> Lihat Respon</button>
+                                                <a href="<?php echo base_url('admin/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> Lihat Respon</button></a>
                                             </div>
                                         </div>
                                         

@@ -1,6 +1,5 @@
 <div class="footer">
         <div>
-            <strong>Build your own questionere here!</strong> &copy; Form Creator <?php echo date('Y')?>
-            <span class="pull-right">Made with &hearts;</span>
+            <strong>Digital Mastery</strong> &copy; <?php echo date('Y')?>
         </div>
     </div>

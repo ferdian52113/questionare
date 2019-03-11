@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Form Creator</title>
+    <title>DMI</title>
 
     <link href="<?php echo base_url()?>css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo base_url()?>font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -31,7 +31,7 @@
                             </div>
                             <div class="ibox-content" id="formDescription" style="text-align: center;">
                                 <h4>Persepsi Anda telah kami catat. Terimakasih :)</h4>
-                                <h5>Kirim persepsi lagi <a href="<?php echo base_url("open?formCode=".$form[0]->formCode)?>">disini</h5>
+                                <h5>Kirim persepsi lagi <a href="<?php echo base_url("open/questioner/".rawurlencode($form[0]->link))?>">disini</h5>
                             </div>
                             </div>  
                         </div>
@@ -69,89 +69,6 @@
     <!-- iCheck -->
     <script src="<?php echo base_url()?>js/plugins/iCheck/icheck.min.js"></script>
     <script src="<?php echo base_url()?>js/jquery.validate.js"></script>
-    <script>
-        $(document).ready(function () {
-            var count = <?php echo count($section)?>;
-
-            init();
-
-            for (var i = 1; i <= count; i++) {
-                $('#formSection-'+i).submit(function(e) {
-                e.preventDefault();
-
-                var me = $(this);
-
-                // perform ajax
-                $.ajax({
-                    url: me.attr('action'),
-                    type: 'post',
-                    data: me.serialize(),
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success == true) {
-                            // if success we would show message
-                            // and also remove the error class
-                            if(i==count){
-                                window.location = "<?php echo base_url() . "open/done" ?>";
-                            } else {
-                                showhide(me.attr('data-sectionID'));
-                            }
-                            
-                        }
-                        else {
-                            alert("Please refresh page");
-                        }
-                    },
-                    error: function(){
-                        alert("Please refresh page");
-                    },
-                });
-            });
-            }
-
-            function init(){
-                var responseID = generateResponseID();
-                $('.responseID').val(responseID);
-
-                $('.i-checks').iCheck({
-                    checkboxClass: 'icheckbox_square-green',
-                    radioClass: 'iradio_square-green',
-                });
-                $('.i-checks').show();
-            }
-
-            function generateResponseID(){
-                var text = "";
-                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-                for (var i = 0; i < 5; i++)
-                    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-                return text;
-            }
-            function showhide(id){
-                var show = $('#next-'+id).attr("data-show");
-                var hide = $('#next-'+id).attr('data-section');
-
-                $('#'+show).show();
-                $('#'+hide).hide();
-
-                $('html, body').animate({scrollTop: $("#" + show).offset().top}, 200);
-            }
-
-            $(".prev-button").on('click', function (e) {
-                var show = $(this).attr("data-show");
-                var hide = $(this).attr('data-section');
-
-                $('#'+show).show();
-                $('#'+hide).hide();
-
-                $('html, body').animate({scrollTop: $("#" + show).offset().top}, 200);
-            });
-
-
-            });
-        </script>
 
     </body>
     </html>

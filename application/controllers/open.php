@@ -40,6 +40,27 @@ class Open extends CI_Controller {
 		}
 	}
 
+	public function questioner($link=null){
+		if($link){
+			$link = urldecode($link);
+			$data = $dtForm = json_decode($this->model_questionare->getDataTable('link',$link,'tb_form'));
+			if($data->status){
+				$formCode = $data->data[0]->formCode;
+				$this->loadQuestionare($formCode);
+			} else {
+				redirect('error');
+			}
+		} else {
+			$result=json_decode($this->model_questionare->getDefaultForm());
+			if($result->status){
+				$formCode=$result->data[0]->formCode;
+				$this->loadQuestionare($formCode);
+			} else {
+				redirect('error');
+			}
+		}
+	} 
+
 	private function loadQuestionare($formCode){
 		$dtForm = json_decode($this->model_questionare->getDataTable('formCode',$formCode,'tb_form'));
 		$dtSection = json_decode($this->model_questionare->getDataTable('formCode',$formCode,'tb_section'));
@@ -49,14 +70,13 @@ class Open extends CI_Controller {
 		$data['section'] = $dtSection->status==true? $dtSection->data : null;
 		$data['question'] = $dtQuestion->status==true? $dtQuestion->data : null;
 		$data['questionDetail'] = $dtQuestionDetail->status==true? $dtQuestionDetail->data : null;
-		$this->load->view('template_question-2',$data);
+		$this->load->view('template_question',$data);
 		//print_r($data['question']);
 	}
 
 	public function save($status=null)
 	{
-		
-		//print_r($this->input->get());
+		header('Access-Control-Allow-Origin: https://digitalmastery.co.id');
 		$formCode=$this->input->post('formCode');
 		$sectionID=$this->input->post('sectionID');
 		$responseID=$this->input->post('responseID');
