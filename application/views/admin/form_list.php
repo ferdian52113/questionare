@@ -80,6 +80,7 @@
                                                 <button class="btn btn-xs btn-warning"><i class="fa fa-pencil "></i> Edit Form</button>
                                                 <button class="btn btn-xs btn-danger"><i class="fa fa-trash "></i> Hapus Form</button>
                                                 <a href="<?php echo base_url('admin/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> Lihat Respon</button></a>
+                                                <a href="<?php echo base_url('admin/export_excel')?>"><button class="btn btn-xs btn-primary"><i class="fa fa-eye"></i> Download Result</button></a>
                                             </div>
                                         </div>
                                         
