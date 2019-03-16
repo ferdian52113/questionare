@@ -81,7 +81,7 @@
                                                 <button class="btn btn-xs btn-danger" disabled=""><i class="fa fa-trash "></i> Delete Form</button>
 
                                                 <a href="<?php echo base_url('admin/export_excel/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-primary"><i class="fa fa-download"></i> Download Result</button></a>
-                                                <a href="<?php echo base_url('admin/showResponden/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> View Dashboard</button></a>
+                                                <a href="<?php echo base_url('admin/view_dashboard/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> View Dashboard</button></a>
                                             </div>
                                         </div>
                                         

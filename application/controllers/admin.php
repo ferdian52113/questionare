@@ -197,18 +197,18 @@ class admin extends CI_Controller {
 
 	
 
-	function demography()
+	function view_dashboard($formCode)
 	{
 		
-		$data['direktorat'] = $this->demografi_model->direktorat();
-		$data['gender'] = $this->demografi_model->gender();
-		$data['pendidikan'] = $this->demografi_model->pendidikan();
-		$data['lokasi'] = $this->demografi_model->lokasi();
-		$data['posisi'] = $this->demografi_model->posisi();
-		$data['profesi'] = $this->demografi_model->profesi();
-		$data['usia'] = $this->demografi_model->usia();
-		$data['generasi'] = $this->demografi_model->generasi();			
-		$this->load->view('admin/demografi',$data);
+		// $data['direktorat'] = $this->demografi_model->direktorat();
+		// $data['gender'] = $this->demografi_model->gender();
+		// $data['pendidikan'] = $this->demografi_model->pendidikan();
+		// $data['lokasi'] = $this->demografi_model->lokasi();
+		// $data['posisi'] = $this->demografi_model->posisi();
+		// $data['profesi'] = $this->demografi_model->profesi();
+		// $data['usia'] = $this->demografi_model->usia();
+		$data['question'] = $this->model_admin->dataQuestion($formCode);			
+		$this->load->view('admin/view_dashboard',$data);
 	}
  	
 	public function proses(){

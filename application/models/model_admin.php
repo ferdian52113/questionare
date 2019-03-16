@@ -72,7 +72,7 @@ class model_admin extends CI_Model {
     }
 
     public function dataQuestion($formCode) {
-        $query = $this->db->query("SELECT * FROM `tb_question` where formCode='$formCode' and rowStatus=0");
+        $query = $this->db->query("SELECT * FROM `tb_question` where formCode='$formCode' and rowStatus=0 limit 4");
         if($query->num_rows() > 0){
             return $query->result();
         } else{
