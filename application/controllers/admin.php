@@ -7,6 +7,8 @@ class admin extends CI_Controller {
 		parent::__construct();
 
 		$this->load->model('model_admin');
+		$this->load->library("PHPExcel");
+
 		date_default_timezone_set("Asia/Jakarta");
 		if ($this->session->userdata('role')!=1) {
             redirect('error');
@@ -283,6 +285,7 @@ class admin extends CI_Controller {
 		}
 	}
 
+
 	function showResponden($formCode){
 		$data['answer'] = $this->model_admin->dataAnswer($formCode);
 		$data['question'] = $this->model_admin->dataQuestion($formCode);
@@ -295,10 +298,61 @@ class admin extends CI_Controller {
 				$query = $query. 'MAX(IF(b.questionID = '.$data["question"][$i]->questionID.', b.value, NULL)) as "'.$data["question"][$i]->question.'"';
 			}
 		}
-		$query = $query.' FROM tb_response a LEFT JOIN tb_answer b ON a.responseID=b.responseID WHERE a.status=1 GROUP BY responseID';
-		print($query);exit;
-		$this->load->view('admin/responden-template',$data);
+		$query = $query." FROM tb_response a LEFT JOIN tb_answer b ON a.responseID=b.responseID WHERE a.status=1 GROUP BY responseID";
+		return $query;
 	}
+
+	public function export_excel($formCode) {
+        //membuat objek
+            $objPHPExcel = new PHPExcel();
+            $data = $this->db->query($this->showResponden($formCode));
+            // print_r($data);exit();
+
+            // Nama Field Baris Pertama
+        	$fields = $data->list_fields();
+        	$col = 0;
+	        foreach ($fields as $field)
+	        {
+	            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, 1, $field);
+	            $col++;
+	        }
+	 
+	        // Mengambil Data
+	        $row = 2;
+	        foreach($data->result() as $data)
+	        {
+	            $col = 0;
+	            foreach ($fields as $field)
+	            {
+	                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $data->$field);
+	                $col++;
+	            }
+	 
+	            $row++;
+	        }
+	        $objPHPExcel->setActiveSheetIndex(0);
+
+            //Set Title
+            $objPHPExcel->getActiveSheet()->setTitle('Data Responden');
+ 
+            //Save ke .xlsx, kalau ingin .xls, ubah 'Excel2007' menjadi 'Excel5'
+            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+ 
+            //Header
+            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+            header("Cache-Control: no-store, no-cache, must-revalidate");
+            header("Cache-Control: post-check=0, pre-check=0", false);
+            header("Pragma: no-cache");
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+            //Nama File
+            header('Content-Disposition: attachment;filename="Data Responden.xlsx"');
+
+            //Download
+            $objWriter->save("php://output");
+
+    }
+
 
 	function logout()
 	{

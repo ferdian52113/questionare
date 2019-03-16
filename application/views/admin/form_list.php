@@ -77,9 +77,11 @@
                                                 <h3><b><?php echo $form[$i]->title?>  </b><span class="label label<?php echo $form[$i]->isActive==1? '-success">Aktif' : '-danger">Tidak Aktif'?></span></h3>
                                                 <p><a href="<?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?>"><?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?></a></p>
                                                 <p><?php echo $form[$i]->description ?></p>
-                                                <button class="btn btn-xs btn-warning"><i class="fa fa-pencil "></i> Edit Form</button>
-                                                <button class="btn btn-xs btn-danger"><i class="fa fa-trash "></i> Hapus Form</button>
-                                                <a href="<?php echo base_url('admin/showResponden/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> Lihat Respon</button></a>
+                                                <button class="btn btn-xs btn-warning" disabled=""><i class="fa fa-pencil "></i> Edit Form</button>
+                                                <button class="btn btn-xs btn-danger" disabled=""><i class="fa fa-trash "></i> Delete Form</button>
+
+                                                <a href="<?php echo base_url('admin/export_excel/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-primary"><i class="fa fa-download"></i> Download Result</button></a>
+                                                <a href="<?php echo base_url('admin/showResponden/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> View Dashboard</button></a>
                                             </div>
                                         </div>
                                         
