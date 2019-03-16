@@ -46,7 +46,7 @@ background-size: cover;
                         <!-- <form action="http://localhost:8080/questionare/user/tambah" method="post" accept-charset="utf-8" enctype="multipart/form-data">  -->
                             <?php for($i=0;$i<count($section);$i++) { $no=0;?>
                                 <input type="hidden" name="sectionID" value="<?php echo $section[$i]->sectionID?>">
-                                <div id="section-<?php echo $section[$i]->sectionID?>" <?php echo ($section[$i]->sectionID>1)? "style='display:block'" : ""?>>
+                                <div id="section-<?php echo $section[$i]->sectionID?>" <?php echo ($section[$i]->sectionID>1)? "style='display:none'" : ""?>>
                                     <div id="sectionContainer-<?php echo $section[$i]->sectionID?>">
                                         <div class="ibox-content orange-bg sectionTitle" id="sectionTitle-<?php echo $section[$i]->sectionID?>" >
                                             <h2><?php echo $section[$i]->title?></h2>
@@ -228,12 +228,17 @@ background-size: cover;
         $(document).ready(function () {
             var count = <?php echo count($section)?>;
             var lastSection = <?php echo $section[count($section)-1]->sectionID?>;
+            var btnNext="";
             init();
 
             for (var i = 1; i <= count; i++) {
                 $('#formSection-'+i).submit(function(e) {
+                btnNext = $(this);
                 e.preventDefault();
-
+                if (btnNext.data('requestRunning')) {
+                    return;
+                }
+                btnNext.data('requestRunning',true);
                 var me = $(this);
                 var sec  = me.attr('data-sectionID');
                 var formCode=$("input[name=formCode]").val();
@@ -254,9 +259,11 @@ background-size: cover;
                         else {
                             alert("Please refresh page");
                         }
+                        btnNext.data('requestRunning',false);
                     },
                     error: function(){
                         alert("Please refresh page");
+                        btnNext.data('requestRunning',false);
                     },
                 });
             });
