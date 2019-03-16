@@ -346,7 +346,7 @@ class admin extends CI_Controller {
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
             //Nama File
-            header('Content-Disposition: attachment;filename="Data Responden.xlsx"');
+            header('Content-Disposition: attachment;filename="Data Responden-'.date("Y-m-d H:i:s").'.xlsx"');
 
             //Download
             $objWriter->save("php://output");
