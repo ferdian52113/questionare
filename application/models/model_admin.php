@@ -53,4 +53,31 @@ class model_admin extends CI_Model {
         }
     }
 
+    public function dataAnswer($formCode) {
+        $query = $this->db->query("SELECT responseID,formCode,sectionID,questionID,value FROM `tb_answer` where formCode='$formCode' GROUP BY responseID,formCode,sectionID,questionID");
+        if($query->num_rows() > 0){
+            return $query->result();
+        } else{
+            return array();
+        }
+    }
+
+    public function dataResponden($formCode) {
+        $query = $this->db->query("SELECT responseID FROM `tb_response` where formCode='$formCode' and status=1");
+        if($query->num_rows() > 0){
+            return $query->result();
+        } else{
+            return array();
+        }
+    }
+
+    public function dataQuestion($formCode) {
+        $query = $this->db->query("SELECT * FROM `tb_question` where formCode='$formCode' and rowStatus=0");
+        if($query->num_rows() > 0){
+            return $query->result();
+        } else{
+            return array();
+        }
+    }
+
 }

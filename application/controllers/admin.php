@@ -285,12 +285,27 @@ class admin extends CI_Controller {
 		}
 	}
 
-	public $answer = 'tb_question';
 
-	public function export_excel() {
+	function showResponden($formCode){
+		$data['answer'] = $this->model_admin->dataAnswer($formCode);
+		$data['question'] = $this->model_admin->dataQuestion($formCode);
+		$query="select a.responseID,";
+		for($i=0;$i<count($data['question']);$i++){
+			if($i!=count($data['question'])-1){
+				$query = $query."MAX(IF(b.questionID = ".$data['question'][$i]->questionID.", b.value, NULL)) as 'q".$data['question'][$i]->questionID."',";
+			} else {
+				$query = $query. "MAX(IF(b.questionID = ".$data['question'][$i]->questionID.", b.value, NULL)) as 'q".$data['question'][$i]->questionID."'";
+			}
+		}
+		$query = $query." FROM tb_response a LEFT JOIN tb_answer b ON a.responseID=b.responseID WHERE a.status=1 GROUP BY responseID";
+		return $query;
+	}
+
+	public function export_excel($formCode) {
         //membuat objek
             $objPHPExcel = new PHPExcel();
-            $data = $this->db->query("SELECT * FROM $this->answer");
+            $data = $this->db->query($this->showResponden($formCode));
+            // print_r($data);exit();
 
             // Nama Field Baris Pertama
         	$fields = $data->list_fields();
@@ -317,7 +332,7 @@ class admin extends CI_Controller {
 	        $objPHPExcel->setActiveSheetIndex(0);
 
             //Set Title
-            $objPHPExcel->getActiveSheet()->setTitle('Data 360');
+            $objPHPExcel->getActiveSheet()->setTitle('Data Responden');
  
             //Save ke .xlsx, kalau ingin .xls, ubah 'Excel2007' menjadi 'Excel5'
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
@@ -330,12 +345,13 @@ class admin extends CI_Controller {
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
             //Nama File
-            header('Content-Disposition: attachment;filename="Data 360.xlsx"');
+            header('Content-Disposition: attachment;filename="Data Responden.xlsx"');
 
             //Download
             $objWriter->save("php://output");
 
     }
+
 
 	function logout()
 	{
