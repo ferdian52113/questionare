@@ -282,6 +282,23 @@ class admin extends CI_Controller {
 			//redirect('admin/data'); 
 		}
 	}
+
+	function showResponden($formCode){
+		$data['answer'] = $this->model_admin->dataAnswer($formCode);
+		$data['question'] = $this->model_admin->dataQuestion($formCode);
+		$query="select a.responseID,";
+		for($i=0;$i<count($data['question']);$i++){
+			if($i!=count($data['question'])-1){
+				$query = $query."MAX(IF(b.questionID = ".$data['question'][$i]->questionID.", b.value, NULL)) as 'q".$data['question'][$i]->questionID."',";
+			} else {
+				$query = $query. "MAX(IF(b.questionID = ".$data['question'][$i]->questionID.", b.value, NULL)) as 'q".$data['question'][$i]->questionID."'";
+			}
+		}
+		$query = $query." FROM tb_response a LEFT JOIN tb_answer b ON a.responseID=b.responseID WHERE a.status=1 GROUP BY responseID";
+		print($query);exit;
+		$this->load->view('admin/responden-template',$data);
+	}
+
 	function logout()
 	{
 		$this->session->sess_destroy();

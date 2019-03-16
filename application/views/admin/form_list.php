@@ -79,7 +79,7 @@
                                                 <p><?php echo $form[$i]->description ?></p>
                                                 <button class="btn btn-xs btn-warning"><i class="fa fa-pencil "></i> Edit Form</button>
                                                 <button class="btn btn-xs btn-danger"><i class="fa fa-trash "></i> Hapus Form</button>
-                                                <a href="<?php echo base_url('admin/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> Lihat Respon</button></a>
+                                                <a href="<?php echo base_url('admin/showResponden/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> Lihat Respon</button></a>
                                             </div>
                                         </div>
                                         
