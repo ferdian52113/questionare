@@ -30,16 +30,73 @@
 
                 <div class="container">
                     <?php echo $this->session->flashdata('msg'); ?>
-                    <div class="row">
+                    
                         <!-- Dashboard -->
-                        <?php for ($i=0; $i < $question ; $i++) { 
-                        ?>
+                        <?php for ($i=0; $i < count($question); $i++) { 
+                            $no = $i+1; ?>
 
-                                        <h5><?php echo $i.' '.$question[$i]->question ?>  </h5>
+                        <?php if($i%2==0) {?>
+                            <div class="row">
+                        <?php } ?>
+
+                        <?php if ($question[$i]->questionType=='Input') { ?>
+                            <div class="col-lg-6">
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-content">
+                                        <div class="row" >
+                                            <div class="col-md-1" style="transform: translateY(-15%);"><h2><?php echo $no ?></h2></div>
+                                            <div class="col-md-11"><span><?php echo $question[$i]->question ?></span></div>
+                                        </div>
+                                    </div>
+                                    <div class="ibox-content">
+                                        <div>
+                                            <textarea id="input<?php echo $question[$i]->questionID ?>" style="width: 100%;height: 300px" readonly="true">
+                                            </textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } else if ($question[$i]->questionType=='Multiple Choice') {?>
+                            <div class="col-lg-6">
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-content">
+                                        <div class="row">
+                                            <div class="col-md-1" style="transform: translateY(-15%);"><h2><?php echo $no ?></h2></div>
+                                            <div class="col-md-11"><span><?php echo $question[$i]->question ?></span></div>
+                                        </div>
+                                    </div>
+                                    <div class="ibox-content">
+                                        <div>
+                                            <div id="pie<?php echo $question[$i]->questionID ?>"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } else if ($question[$i]->questionType=='Skala') {?>
+                            <div class="col-lg-6">
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-content">
+                                        <div class="row">
+                                            <div class="col-md-1" style="transform: translateY(-15%);"><h2><?php echo $no ?></h2></div>
+                                            <div class="col-md-11"><span><?php echo $question[$i]->question ?></span></div>
+                                        </div>
+                                    </div>
+                                    <div class="ibox-content">
+                                        <div>
+                                            <div id="gauge<?php echo $question[$i]->questionID ?>"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php }  ?>
+
+                        <?php if($i%2!=0) {?>
+                            </div>
+                        <?php } ?>
 
                         <?php } ?>
                         <!-- END -->
-                    </div>
+                    
                     
                 </div>
 
@@ -82,26 +139,76 @@
         $(document).ready(function () {
 
             c3.generate({
-                bindto: '#gauge',
+                bindto: '#stocked',
                 data:{
                     columns: [
-                        ['data', 91.4]
+                        ['LikertScale', 200,100,400,150,250],
+                        ['Average', 120,120,120,120,120]
+                    ],
+                    colors:{
+                        LikertScale: '#1ab394',
+                        Average: '#BABABA'
+                    },
+                    type: 'bar',
+                    types: {
+                        Average: 'line'
+                    },
+                    axis: {
+                      x: {
+                        max: 1
+                        
+                      }
+                    }
+                }
+            });
+
+            // Skala
+            <?php for ($c=0; $c < count($question); $c++) { 
+                if ($question[$c]->questionType=='Skala') {
+            ?>
+            c3.generate({
+                bindto: '#gauge<?php echo $question[$c]->questionID ?>',
+                data:{
+                    columns: [
+                        <?php for ($d=0; $d < count($answerScale); $d++) { 
+                            if ($answerScale[$d]->questionID == $question[$c]->questionID) {
+                        ?>
+                        ['data', <?php echo $answerScale[$d]->average ?>]
+                        <?php } } ?>
                     ],
 
                     type: 'gauge'
+                },
+                gauge: {
+                    label: {
+                        format: function(value, ratio) {
+                            return value;
+                        }
+                    },
+                    min: 1,
+                    max: 5
                 },
                 color:{
                     pattern: ['#1ab394', '#BABABA']
 
                 }
-            });
 
+            });
+            <?php } } ?>
+
+            // Multiple Choice
+            <?php for ($a=0; $a < count($question); $a++) { 
+                if ($question[$a]->questionType=='Multiple Choice') {
+            ?>
             c3.generate({
-                bindto: '#pie',
+                bindto: '#pie<?php echo $question[$a]->questionID ?>',
                 data:{
                     columns: [
-                        ['data1', 30],
-                        ['data2', 120]
+                        <?php for ($b=0; $b < count($answerChoice); $b++) { 
+                            if ($answerChoice[$b]->questionID == $question[$a]->questionID) {
+                        ?>
+                            ['<?php echo $answerChoice[$b]->value ?>', <?php echo $answerChoice[$b]->total ?>],
+                        <?php } } ?>
                     ],
                     colors:{
                         data1: '#1ab394',
@@ -110,6 +217,24 @@
                     type : 'pie'
                 }
             });
+            <?php } } ?>
+
+            <?php for ($a=0; $a < count($question); $a++) { 
+                if ($question[$a]->questionType=='Input') {
+            ?>
+            <?php $ans="";
+            for ($j=0; $j < count($answerInput) ; $j++) {  
+                    if($answerInput[$j]->questionID==$question[$a]->questionID) {
+                        $ans = $ans.trim($answerInput[$j]->value).'\n';
+                        ?> 
+                    <?php } 
+                }
+            ?>
+            <?php }?> 
+                var ans = "<?php echo $ans?>";
+                $("#input"+<?php echo $question[$a]->questionID?>).val(ans.trim());
+            <?php } ?>
+
 
         });
 

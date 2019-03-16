@@ -207,6 +207,9 @@ class admin extends CI_Controller {
 		// $data['posisi'] = $this->demografi_model->posisi();
 		// $data['profesi'] = $this->demografi_model->profesi();
 		// $data['usia'] = $this->demografi_model->usia();
+		$data['answerScale'] = $this->model_admin->dashboard_answerScale($formCode);
+		$data['answerChoice'] = $this->model_admin->dashboard_answerChoice($formCode);
+		$data['answerInput'] = $this->model_admin->dashboard_answerInput($formCode);
 		$data['question'] = $this->model_admin->dataQuestion($formCode);			
 		$this->load->view('admin/view_dashboard',$data);
 	}

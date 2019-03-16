@@ -72,7 +72,43 @@ class model_admin extends CI_Model {
     }
 
     public function dataQuestion($formCode) {
-        $query = $this->db->query("SELECT * FROM `tb_question` where formCode='$formCode' and rowStatus=0 limit 4");
+        $query = $this->db->query("SELECT * FROM `tb_question` where formCode='$formCode' and rowStatus=0");
+        if($query->num_rows() > 0){
+            return $query->result();
+        } else{
+            return array();
+        }
+    }
+
+    public function dashboard_answerChoice($formCode) {
+        $query = $this->db->query("SELECT ans.formCode,ans.sectionID,ans.questionID,count(ans.value) as total,ans.value 
+					FROM tb_answer ans LEFT JOIN tb_question qst ON ans.questionID = qst.questionID
+					where ans.formCode='$formCode' AND qst.questionType='Multiple Choice'
+					GROUP BY ans.formCode,ans.sectionID,ans.questionID,ans.value");
+        if($query->num_rows() > 0){
+            return $query->result();
+        } else{
+            return array();
+        }
+    }
+
+    public function dashboard_answerScale($formCode) {
+        $query = $this->db->query("SELECT ans.formCode,ans.sectionID,ans.questionID,FORMAT(AVG(ans.value),2) as average 
+					FROM tb_answer ans LEFT JOIN tb_question qst ON ans.questionID = qst.questionID
+					where ans.formCode='$formCode' AND qst.questionType='Skala'
+					GROUP BY ans.formCode,ans.sectionID,ans.questionID");
+        if($query->num_rows() > 0){
+            return $query->result();
+        } else{
+            return array();
+        }
+    }
+
+    public function dashboard_answerInput($formCode) {
+        $query = $this->db->query("SELECT ans.formCode,ans.responseID,ans.sectionID,ans.questionID,TRIM(ans.value) as value 
+					FROM tb_answer ans LEFT JOIN tb_question qst ON ans.questionID = qst.questionID
+					where ans.formCode='$formCode' AND qst.questionType='Input'
+					GROUP BY ans.formCode,ans.responseID,ans.sectionID,ans.questionID");
         if($query->num_rows() > 0){
             return $query->result();
         } else{
