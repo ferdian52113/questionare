@@ -289,12 +289,13 @@ class admin extends CI_Controller {
 	function showResponden($formCode){
 		$data['answer'] = $this->model_admin->dataAnswer($formCode);
 		$data['question'] = $this->model_admin->dataQuestion($formCode);
-		$query="select a.responseID,";
+		$query='select a.responseID,';
 		for($i=0;$i<count($data['question']);$i++){
 			if($i!=count($data['question'])-1){
-				$query = $query."MAX(IF(b.questionID = ".$data['question'][$i]->questionID.", b.value, NULL)) as 'q".$data['question'][$i]->questionID."',";
+				$query = $query.'MAX(IF(b.questionID = '.$data["question"][$i]->questionID.', b.value, NULL)) as "'.$data[
+				"question"][$i]->question.'",';
 			} else {
-				$query = $query. "MAX(IF(b.questionID = ".$data['question'][$i]->questionID.", b.value, NULL)) as 'q".$data['question'][$i]->questionID."'";
+				$query = $query. 'MAX(IF(b.questionID = '.$data["question"][$i]->questionID.', b.value, NULL)) as "'.$data["question"][$i]->question.'"';
 			}
 		}
 		$query = $query." FROM tb_response a LEFT JOIN tb_answer b ON a.responseID=b.responseID WHERE a.status=1 GROUP BY responseID";
@@ -345,7 +346,7 @@ class admin extends CI_Controller {
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
             //Nama File
-            header('Content-Disposition: attachment;filename="Data Responden.xlsx"');
+            header('Content-Disposition: attachment;filename="Data Responden-'.date("Y-m-d H:i:s").'.xlsx"');
 
             //Download
             $objWriter->save("php://output");
