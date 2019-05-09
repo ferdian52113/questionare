@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>DMI</title>
+    <title>DMI | ADMIN</title>
 
     <link href="<?php echo base_url()?>css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo base_url()?>font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -16,37 +16,67 @@
 
 </head>
 
-<body class="gray-bg top-navigation" style="display: table;
-position: relative;
-width: 100%;
-height: 100%;
-background: url(assets/home-b.jpg) no-repeat center center scroll;
--webkit-background-size: cover;
--moz-background-size: cover;
-background-size: cover;
--o-background-size: cover;">
+<body class="top-navigation">
 
-<div id="wrapper">
-    <div id="page-wrapper" class="gray-bg">
-        <div class="wrapper wrapper-content">
-            <div class="container">
-                <?php echo $this->session->flashdata('msg'); ?>
-                <div class="row">
-                    <!-- Questionare-->
-                    <div class="col-lg-10 col-lg-offset-1">
-                        <div class="ibox float-e-margins">
-                            <div id="formContainer">
-                             <div class="ibox-title" id="formTitle" >
-                                <h1><?php echo $form[0]->title?></h1>
+    <div id="wrapper">
+        <div id="page-wrapper" class="gray-bg">
+
+            <?php include('admin_header.php') ?>
+
+            <div class="wrapper wrapper-content">
+
+                <div class="container">
+                    <?php echo $this->session->flashdata('msg'); ?>
+                    <div class="row">
+                        <!-- Create Form-->
+                        <div class="col-lg-4">
+                            <div class="ibox float-e-margins" >
+                                <div class="ibox-content">
+                                    <?php for ($i=0; $i < count($form) ; $i++) { ?>
+                                        <div>
+                                            <h3><b><?php echo $form[$i]->title?>  </b><span class="label label<?php echo $form[$i]->isActive==1? '-success">Aktif' : '-danger">Tidak Aktif'?></span></h3>
+                                            <p><?php echo $form[$i]->description ?></p>
+                                            <a href=""><button class="btn btn-xs btn-primary"><i class="fa fa-add"></i> Add Section</button></a>
+                                        </div>
+                                        <div class="pull-right">
+                                            
+                                        </div>
+                                    <?php } ?>
+                                </div>
                             </div>
-                            <div class="ibox-content" id="formDescription" style="text-align: justify;">
-                                <?php echo $form[0]->description?>
-                            </div>  
                         </div>
-                        <!-- <form action="http://localhost:8080/questionare/user/tambah" method="post" accept-charset="utf-8" enctype="multipart/form-data">  -->
+
+                        <!-- My Form -->
+                        <div class="col-lg-8">
+                            <!-- <div id="section-1">
+                                <div id="sectionContainer-1">
+                                    <div class="ibox-content orange-bg sectionTitle" id="sectionTitle-1">
+                                        <h2>Bagian 1: Informasi Umum <span class="pull-right"><a href=""><button class="btn btn-xs btn-info"><i class="fa fa-add"></i> Add Question</button></a></span></h2> 
+                                    </div>
+                                </div>
+                                <div id="formSection-1" data-sectionid="1">
+                                    <input type="hidden" name="formCode" value="gTyluecT6G">
+                                    <input type="hidden" class="responseID" name="responseID" value="FLePs">
+                                    <input type="hidden" name="sectionID" value="1">
+                                    <div class="ibox-content" id="questionContainer-1" style="margin-bottom: 25px;">
+                                        <div id="questionContaine-1">
+                                            <div id="section1-question1">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <label>1. Nama Perusahaan Anda 
+                                                            <span style="color:red">*</span>
+                                                        </label>
+                                                        <input type="text" class="form-control" autocomplete="off" name="1" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div> -->
                             <?php for($i=0;$i<count($section);$i++) { $no=0;?>
                                 <input type="hidden" name="sectionID" value="<?php echo $section[$i]->sectionID?>">
-                                <div id="section-<?php echo $section[$i]->sectionID?>" <?php echo ($section[$i]->sectionID>1)? "style='display:none'" : ""?>>
+                                <div id="section-<?php echo $section[$i]->sectionID?>">
                                     <div id="sectionContainer-<?php echo $section[$i]->sectionID?>">
                                         <div class="ibox-content orange-bg sectionTitle" id="sectionTitle-<?php echo $section[$i]->sectionID?>" >
                                             <h2><?php echo $section[$i]->title?></h2>
@@ -57,17 +87,17 @@ background-size: cover;
                                             </div>  
                                         <?php } ?>
                                     </div>
-                                    <form id="formSection-<?php echo $section[$i]->sectionID?>" data-sectionID="<?php echo $section[$i]->sectionID?>" action="<?php echo $section[$i]->sectionID==$section[count($section)-1]->sectionID ? base_url()."open/save/final" : base_url()."open/save"?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+                                    <div id="formSection-<?php echo $section[$i]->sectionID?>" data-sectionID="<?php echo $section[$i]->sectionID?>" >
                                         <input type="hidden" name="formCode" name="formCode" value="<?php echo $form[0]->formCode?>">
                                         <input type="hidden" class="responseID" name="responseID" value="">
                                         <input type="hidden" name="sectionID" value="<?php echo $section[$i]->sectionID?>">
-                                        <div class="ibox-content" id="questionContainer-<?php echo $section[$i]->sectionID?>" style="margin-bottom: 25px;<?php echo ($section[$i]->sectionID < 1)? "display: none" : ""?>">
+                                        <div class="ibox-content" id="questionContainer-<?php echo $section[$i]->sectionID?>" style="margin-bottom: 25px;">
                                             <?php for($j=0;$j<count($question);$j++) {
                                                 if($question[$j]->sectionID == $section[$i]->sectionID) {
                                                     $no++;
                                                     /*Type Input*/
                                                     if($question[$j]->questionType == 'Input') {
-                                                        echo '<div id="questionContainer-'.$question[$j]->questionID.'">
+                                                        echo '<div id="questionContaine-'.$question[$j]->questionID.'">
                                                         <div id="section'.$section[$i]->sectionID.'-question'.$question[$j]->questionID.'" >
                                                         <div class="row">
                                                         <div class="col-md-12">
@@ -80,7 +110,7 @@ background-size: cover;
                                                     }
                                                     /*Type Multiple Choice*/
                                                     else if ($question[$j]->questionType=='Multiple Choice'){
-                                                        echo '<div id="questionContainer-'.$question[$j]->questionID.'">
+                                                        echo '<div id="questionContaine-'.$question[$j]->questionID.'">
                                                         <div id="section'.$section[$i]->sectionID.'-question'.$question[$j]->questionID.'" >
                                                         <div class="row">
                                                         <div class="col-md-12">
@@ -108,7 +138,7 @@ background-size: cover;
                                                     }
                                                     /*Likert Input*/
                                                     else if($question[$j]->questionType == 'Skala') {
-                                                        echo '<div id="questionContainer-'.$question[$j]->questionID.'">
+                                                        echo '<div id="questionContaine-'.$question[$j]->questionID.'">
                                                         <div id="section'.$section[$i]->sectionID.'-question'.$question[$j]->questionID.'" >
                                                         <div class="row">
                                                         <div class="form-group">
@@ -147,7 +177,7 @@ background-size: cover;
                                                         <td style="width:10%;text-align: center;">
                                                         <input class="i-checks" type="radio" value="5" name="'.$question[$j]->questionID.'" required/>
                                                         </td>
-                                                        <td style="width:25%;text-align: left;">Sangat Setuju</td>
+                                                        <td style="width:25%;text-align: left;">Sanget Setuju</td>
                                                         </tr>
                                                         </tbody>
                                                         </table>
@@ -158,160 +188,47 @@ background-size: cover;
                                                     }
                                                 }
                                             }
-                                            if($section[$i]->sectionID==$section[0]->sectionID){
-                                                echo '
-                                                <div class="row">
-                                                    <div class="col-md-12 text-right">
-                                                        <input type="submit" class="btn btn-success" data-show="section-'.$section[$i+1]->sectionID.'" data-section="section-'.$section[$i]->sectionID.'" id="next-'.$section[$i]->sectionID.'" value="Selanjutnya">
-                                                    </div>
-                                                </div>
-                                                </div></div>';
-                                            } else if ($section[$i]->sectionID==$section[count($section)-1]->sectionID){
-                                                echo '
-                                                <div class="row">
-                                                    <div class="col-md-12 text-right">
-                                                        <input type="button" data-show="section-'.$section[$i-1]->sectionID.'" data-section="section-'.$section[$i]->sectionID.'" class="prev-button btn btn-success" id="prev-'.$section[$i]->sectionID.'" value="Sebelumnya">
-                                                        <input type="submit" class="btn btn-success" id="kirim-'.$section[$i]->sectionID.'" value="Kirim">
-                                                    </div>
-                                                </div>
-                                                </div></div>';
-                                            } else {
-                                                echo '
-                                                <div class="row">
-                                                    <div class="col-md-12 text-right">
-                                                        <input type="button" data-show="section-'.$section[$i-1]->sectionID.'" data-section="section-'.$section[$i]->sectionID.'" class="prev-button btn btn-success" id="prev-'.$section[$i]->sectionID.'" value="Sebelumnya">
-                                                        <input type="submit" class="btn btn-success" data-show="section-'.$section[$i+1]->sectionID.'" data-section="section-'.$section[$i]->sectionID.'" id="next-'.$section[$i]->sectionID.'" value="Selanjutnya">
-                                                    </div>
-                                                </div>
-                                                </div></div>';
-                                            }
-                                            echo "</form>";
-                                        } ?>
-                                    
-                            </div>
+                                            echo "</div>";
+                                        } ?>    
                         </div>
+                        <?php include('admin_footer.php') ?>
                     </div>
                 </div>
-            </div>
-            <?php include('admin/admin_footer.php') ?>
-        </div>
-    </div>
 
 
 
 
 
 
-    <!-- Mainly scripts -->
-    <script src="<?php echo base_url()?>js/jquery-2.1.1.js"></script>
-    <script src="<?php echo base_url()?>js/bootstrap.min.js"></script>
-    <script src="<?php echo base_url()?>js/plugins/metisMenu/jquery.metisMenu.js"></script>
-    <script src="<?php echo base_url()?>js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+                    <!-- Mainly scripts -->
+                    <script src="<?php echo base_url()?>js/jquery-2.1.1.js"></script>
+                    <script src="<?php echo base_url()?>js/bootstrap.min.js"></script>
+                    <script src="<?php echo base_url()?>js/plugins/metisMenu/jquery.metisMenu.js"></script>
+                    <script src="<?php echo base_url()?>js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
-    <!-- Custom and plugin javascript -->
-    <script src="<?php echo base_url()?>js/inspinia.js"></script>
-    <script src="<?php echo base_url()?>js/plugins/pace/pace.min.js"></script>
+                    <!-- Custom and plugin javascript -->
+                    <script src="<?php echo base_url()?>js/inspinia.js"></script>
+                    <script src="<?php echo base_url()?>js/plugins/pace/pace.min.js"></script>
 
-    <!-- ChartJS-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+                    <!-- ChartJS-->
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
 
-    <!-- Morris -->
-    <script src="<?php echo base_url()?>js/plugins/morris/raphael-2.1.0.min.js"></script>
-    <script src="<?php echo base_url()?>js/plugins/morris/morris.js"></script>
+                    <!-- Morris -->
+                    <script src="<?php echo base_url()?>js/plugins/morris/raphael-2.1.0.min.js"></script>
+                    <script src="<?php echo base_url()?>js/plugins/morris/morris.js"></script>
 
-    <script src="<?php echo base_url()?>js/plugins/dataTables/datatables.min.js"></script>
+                    <script src="<?php echo base_url()?>js/plugins/dataTables/datatables.min.js"></script>
 
-    <!-- iCheck -->
-    <script src="<?php echo base_url()?>js/plugins/iCheck/icheck.min.js"></script>
-    <script src="<?php echo base_url()?>js/jquery.validate.js"></script>
-    <script>
-        $(document).ready(function () {
-            var count = <?php echo count($section)?>;
-            var lastSection = <?php echo $section[count($section)-1]->sectionID?>;
-            var btnNext="";
-            init();
+                    <!-- iCheck -->
+                    <script src="<?php echo base_url()?>js/plugins/iCheck/icheck.min.js"></script>
+                    <script>
+                        $(document).ready(function () {
+                            $('.i-checks').iCheck({
+                                checkboxClass: 'icheckbox_square-green',
+                                radioClass: 'iradio_square-green',
+                            });
+                        });
+                    </script>
 
-            for (var i = 1; i <= count; i++) {
-                $('#formSection-'+i).submit(function(e) {
-                btnNext = $(this);
-                e.preventDefault();
-                if (btnNext.data('requestRunning')) {
-                    return;
-                }
-                btnNext.data('requestRunning',true);
-                var me = $(this);
-                var sec  = me.attr('data-sectionID');
-                var formCode=$("input[name=formCode]").val();
-                // perform ajax
-                $.ajax({
-                    url: me.attr('action'),
-                    type: 'post',
-                    data: me.serialize(),
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success == true) {
-                            if(sec==lastSection){
-                                window.location = "<?php echo base_url() . "open/done/" ?>"+formCode;
-                            } else {
-                                showhide(me.attr('data-sectionID'));
-                            }
-                        }
-                        else {
-                            alert("Please refresh page");
-                        }
-                        btnNext.data('requestRunning',false);
-                    },
-                    error: function(){
-                        alert("Please refresh page");
-                        btnNext.data('requestRunning',false);
-                    },
-                });
-            });
-            }
-
-            function init(){
-                var responseID = generateResponseID();
-                $('.responseID').val(responseID);
-
-                $('.i-checks').iCheck({
-                    checkboxClass: 'icheckbox_square-green',
-                    radioClass: 'iradio_square-green',
-                });
-                $('.i-checks').show();
-            }
-
-            function generateResponseID(){
-                var text = "";
-                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-                for (var i = 0; i < 5; i++)
-                    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-                return text;
-            }
-            function showhide(id){
-                var show = $('#next-'+id).attr("data-show");
-                var hide = $('#next-'+id).attr('data-section');
-
-                $('#'+show).show();
-                $('#'+hide).hide();
-
-                $('html, body').animate({scrollTop: $("#" + show).offset().top}, 200);
-            }
-
-            $(".prev-button").on('click', function (e) {
-                var show = $(this).attr("data-show");
-                var hide = $(this).attr('data-section');
-
-                $('#'+show).show();
-                $('#'+hide).hide();
-
-                $('html, body').animate({scrollTop: $("#" + show).offset().top}, 200);
-            });
-
-
-            });
-        </script>
-
-    </body>
-    </html>
+                </body>
+                </html>

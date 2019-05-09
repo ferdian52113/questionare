@@ -74,12 +74,17 @@
                                     <div class="ibox float-e-margins" >
                                         <div class="ibox-content">
                                             <div>
+                                                <!-- <input type="hidden" value="<?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?>" id="url-formCode-<?php echo $form[$i]->formCode?>"> -->
                                                 <h3><b><?php echo $form[$i]->title?>  </b><span class="label label<?php echo $form[$i]->isActive==1? '-success">Aktif' : '-danger">Tidak Aktif'?></span></h3>
-                                                <p><a href="<?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?>"><?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?></a></p>
+                                                <?php if($form[$i]->isActive==1) {?>
+                                                
+                                                <?php }?>
+                                                <a href="<?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?>" target="_blank"><button type="button" class="btn btn-xs btn-warning">View Questionare</button></a>
+                                                <!-- <button type="button" class="btn btn-xs btn-info myTooltip" data-toggle="tooltip" data-placement="top" title="Copy to clipboard" data-formCode="<?php echo $form[$i]->formCode?>">Copy URL</button> -->
                                                 <p><?php echo $form[$i]->description ?></p>
                                                 <button class="btn btn-xs btn-warning" disabled=""><i class="fa fa-pencil "></i> Edit Form</button>
                                                 <button class="btn btn-xs btn-danger" disabled=""><i class="fa fa-trash "></i> Delete Form</button>
-
+                                                <a href="<?php echo base_url('admin/question/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-info"><i class="fa fa-question"></i> Add Question</button></a>
                                                 <a href="<?php echo base_url('admin/export_excel/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-primary"><i class="fa fa-download"></i> Download Result</button></a>
                                                 <a href="<?php echo base_url('admin/view_dashboard/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> View Dashboard</button></a>
                                             </div>
@@ -115,12 +120,7 @@
 <script src="<?php echo base_url()?>js/inspinia.js"></script>
 <script src="<?php echo base_url()?>js/plugins/pace/pace.min.js"></script>
 
-<!-- ChartJS-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
 
-<!-- Morris -->
-<script src="<?php echo base_url()?>js/plugins/morris/raphael-2.1.0.min.js"></script>
-<script src="<?php echo base_url()?>js/plugins/morris/morris.js"></script>
 
 <script src="<?php echo base_url()?>js/plugins/dataTables/datatables.min.js"></script>
 
@@ -128,6 +128,16 @@
     <script src="<?php echo base_url()?>js/plugins/iCheck/icheck.min.js"></script>
         <script>
             $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+
+                $('.myTooltip').click(function(e){
+                    var me = $(this);
+                    var formCode = me.attr("data-formCode");
+                    var copyText = document.getElementById("url-formCode-"+formCode);
+                    copyText.select();
+                    document.execCommand("copy");
+                });
+
                 $('.i-checks').iCheck({
                     checkboxClass: 'icheckbox_square-green',
                     radioClass: 'iradio_square-green',

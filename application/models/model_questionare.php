@@ -98,6 +98,13 @@ class model_questionare extends CI_Model {
         $this->db->query("DELETE FROM $table WHERE formCode='$formCode' AND sectionID='$sectionID' AND responseID='$responseID'");
     }
 	
-
+    public function getSetting() {
+        $query = $this->db->query("SELECT * FROM tb_setting");
+        if($query->num_rows() > 0){
+            return $query->result();
+        } else{
+            return array();
+        }
+    }
 
 }

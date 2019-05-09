@@ -30,7 +30,8 @@
 
                 <div class="container">
                     <?php echo $this->session->flashdata('msg'); ?>
-                    
+                        <h2>Summary of <?php echo count($responses) ?> Responses</h2>
+                        <hr>
                         <!-- Dashboard -->
                         <?php for ($i=0; $i < count($question); $i++) { 
                             $no = $i+1; ?>

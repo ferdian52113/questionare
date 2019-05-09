@@ -5,7 +5,7 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="<?php echo base_url()?>assets/gi.ico">
+    
     <title>Login</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">

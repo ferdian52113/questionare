@@ -116,4 +116,13 @@ class model_admin extends CI_Model {
         }
     }
 
+    public function getSetting() {
+        $query = $this->db->query("SELECT * FROM tb_setting");
+        if($query->num_rows() > 0){
+            return $query->result();
+        } else{
+            return array();
+        }
+    }
+
 }

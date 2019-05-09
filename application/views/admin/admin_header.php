@@ -12,7 +12,7 @@
                                 <a aria-expanded="false" role="button" href="<?php echo base_url()?>admin"> Form</a>
                             </li>
                             <li>
-                                <a aria-expanded="false" role="button" href="<?php echo base_url()?>admin/question"> Question</a>
+                                <a aria-expanded="false" role="button" href="<?php echo base_url()?>admin/setting"> Setting</a>
                             </li>
 
                         </ul>

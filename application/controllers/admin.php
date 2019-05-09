@@ -7,6 +7,7 @@ class admin extends CI_Controller {
 		parent::__construct();
 
 		$this->load->model('model_admin');
+		$this->load->model('model_questionare');
 		$this->load->library("PHPExcel");
 
 		date_default_timezone_set("Asia/Jakarta");
@@ -199,18 +200,11 @@ class admin extends CI_Controller {
 
 	function view_dashboard($formCode)
 	{
-		
-		// $data['direktorat'] = $this->demografi_model->direktorat();
-		// $data['gender'] = $this->demografi_model->gender();
-		// $data['pendidikan'] = $this->demografi_model->pendidikan();
-		// $data['lokasi'] = $this->demografi_model->lokasi();
-		// $data['posisi'] = $this->demografi_model->posisi();
-		// $data['profesi'] = $this->demografi_model->profesi();
-		// $data['usia'] = $this->demografi_model->usia();
 		$data['answerScale'] = $this->model_admin->dashboard_answerScale($formCode);
 		$data['answerChoice'] = $this->model_admin->dashboard_answerChoice($formCode);
 		$data['answerInput'] = $this->model_admin->dashboard_answerInput($formCode);
-		$data['question'] = $this->model_admin->dataQuestion($formCode);			
+		$data['question'] = $this->model_admin->dataQuestion($formCode);	
+		$data['responses'] = $this->model_admin->dataResponden($formCode);		
 		$this->load->view('admin/view_dashboard',$data);
 	}
  	
@@ -292,70 +286,86 @@ class admin extends CI_Controller {
 	function showResponden($formCode){
 		$data['answer'] = $this->model_admin->dataAnswer($formCode);
 		$data['question'] = $this->model_admin->dataQuestion($formCode);
-		$query='select a.responseID,';
-		for($i=0;$i<count($data['question']);$i++){
-			if($i!=count($data['question'])-1){
-				$query = $query.'MAX(IF(b.questionID = '.$data["question"][$i]->questionID.', b.value, NULL)) as "'.$data[
-				"question"][$i]->question.'",';
-			} else {
-				$query = $query. 'MAX(IF(b.questionID = '.$data["question"][$i]->questionID.', b.value, NULL)) as "'.$data["question"][$i]->question.'"';
+		if(count($data['answer']) > 0){
+			$query='select a.responseID,';
+			for($i=0;$i<count($data['question']);$i++){
+				if($i!=count($data['question'])-1){
+					$query = $query.'MAX(IF(b.questionID = '.$data["question"][$i]->questionID.', b.value, NULL)) as "'.$data[
+					"question"][$i]->question.'",';
+				} else {
+					$query = $query. 'MAX(IF(b.questionID = '.$data["question"][$i]->questionID.', b.value, NULL)) as "'.$data["question"][$i]->question.'"';
+				}
 			}
+			$query = $query." FROM tb_response a LEFT JOIN tb_answer b ON a.responseID=b.responseID WHERE a.status=1 GROUP BY responseID";
+		} else {
+			$query = 'select "No Data" as Responden';
 		}
-		$query = $query." FROM tb_response a LEFT JOIN tb_answer b ON a.responseID=b.responseID WHERE a.status=1 GROUP BY responseID";
+		
 		return $query;
 	}
 
 	public function export_excel($formCode) {
-        //membuat objek
-            $objPHPExcel = new PHPExcel();
-            $data = $this->db->query($this->showResponden($formCode));
-            // print_r($data);exit();
+		//membuat objek
+        $objPHPExcel = new PHPExcel();
+        $data = $this->db->query($this->showResponden($formCode));
+        // print_r($data);exit();
 
-            // Nama Field Baris Pertama
-        	$fields = $data->list_fields();
-        	$col = 0;
-	        foreach ($fields as $field)
-	        {
-	            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, 1, $field);
-	            $col++;
-	        }
-	 
-	        // Mengambil Data
-	        $row = 2;
-	        foreach($data->result() as $data)
-	        {
-	            $col = 0;
-	            foreach ($fields as $field)
-	            {
-	                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $data->$field);
-	                $col++;
-	            }
-	 
-	            $row++;
-	        }
-	        $objPHPExcel->setActiveSheetIndex(0);
-
-            //Set Title
-            $objPHPExcel->getActiveSheet()->setTitle('Data Responden');
+        // Nama Field Baris Pertama
+    	$fields = $data->list_fields();
+    	$col = 0;
+        foreach ($fields as $field)
+        {
+            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, 1, $field);
+            $col++;
+        }
  
-            //Save ke .xlsx, kalau ingin .xls, ubah 'Excel2007' menjadi 'Excel5'
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        // Mengambil Data
+        $row = 2;
+        foreach($data->result() as $data)
+        {
+            $col = 0;
+            foreach ($fields as $field)
+            {
+                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $data->$field);
+                $col++;
+            }
  
-            //Header
-            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-            header("Cache-Control: no-store, no-cache, must-revalidate");
-            header("Cache-Control: post-check=0, pre-check=0", false);
-            header("Pragma: no-cache");
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $row++;
+        }
+        $objPHPExcel->setActiveSheetIndex(0);
 
-            //Nama File
-            header('Content-Disposition: attachment;filename="Data Responden-'.date("Y-m-d H:i:s").'.xlsx"');
+        //Set Title
+        $objPHPExcel->getActiveSheet()->setTitle('Data Responden');
 
-            //Download
-            $objWriter->save("php://output");
+        //Save ke .xlsx, kalau ingin .xls, ubah 'Excel2007' menjadi 'Excel5'
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 
+        //Header
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+        header("Cache-Control: no-store, no-cache, must-revalidate");
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        //Nama File
+        header('Content-Disposition: attachment;filename="Data Responden-'.date("Y-m-d H:i:s").'.xlsx"');
+
+        //Download
+        $objWriter->save("php://output");
+      
     }
 
+    function question($formCode){
+    	$dtForm = json_decode($this->model_questionare->getDataTable('formCode',$formCode,'tb_form'));
+		$dtSection = json_decode($this->model_questionare->getDataTable('formCode',$formCode,'tb_section'));
+		$dtQuestion = json_decode($this->model_questionare->getDataTableQuestion('formCode',$formCode,'tb_question'));
+		$dtQuestionDetail = json_decode($this->model_questionare->getDataTableQuestionDetail($formCode));
+		$data['form'] = $dtForm->status==true? $dtForm->data : null;
+		$data['section'] = $dtSection->status==true? $dtSection->data : null;
+		$data['question'] = $dtQuestion->status==true? $dtQuestion->data : null;
+		$data['questionDetail'] = $dtQuestionDetail->status==true? $dtQuestionDetail->data : null;
+		$this->load->view('admin/question_list',$data);
+    }
 
 	function logout()
 	{
