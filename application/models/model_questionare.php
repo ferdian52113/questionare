@@ -12,7 +12,7 @@ class model_questionare extends CI_Model {
 	}
 
     public function cekDataForm($table,$formCode){
-        $query = $this->db->query("SELECT * FROM $table WHERE formCode='$formCode' LIMIT 1");
+        $query = $this->db->query("SELECT * FROM $table WHERE formCode='$formCode' AND isActive= '1' LIMIT 1");
 
         if($query->num_rows() > 0){
             return true;
@@ -98,10 +98,10 @@ class model_questionare extends CI_Model {
         $this->db->query("DELETE FROM $table WHERE formCode='$formCode' AND sectionID='$sectionID' AND responseID='$responseID'");
     }
 	
-    public function getSetting() {
-        $query = $this->db->query("SELECT * FROM tb_setting");
+    public function getSetting($optionName) {
+        $query = $this->db->query("SELECT valueName FROM tb_setting where optionName='$optionName' LIMIT 1");
         if($query->num_rows() > 0){
-            return $query->result();
+            return $query->row();
         } else{
             return array();
         }

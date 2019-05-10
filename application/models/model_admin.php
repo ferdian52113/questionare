@@ -36,7 +36,7 @@ class model_admin extends CI_Model {
     }
 
     public function form_list() {
-		$query = $this->db->query("SELECT * FROM tb_form WHERE isActive='1'");
+		$query = $this->db->query("SELECT * FROM tb_form");
 		if($query->num_rows() > 0){
             return $query->result();
         } else{
@@ -116,10 +116,10 @@ class model_admin extends CI_Model {
         }
     }
 
-    public function getSetting() {
-        $query = $this->db->query("SELECT * FROM tb_setting");
+    public function getSetting($optionName) {
+        $query = $this->db->query("SELECT valueName FROM tb_setting where optionName='$optionName' LIMIT 1");
         if($query->num_rows() > 0){
-            return $query->result();
+            return $query->row();
         } else{
             return array();
         }

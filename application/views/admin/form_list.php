@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>DMI | ADMIN</title>
+    <title><?php echo isset($companyName)? $companyName->valueName." | " : ""?> ADMIN</title>
 
     <link href="<?php echo base_url()?>css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo base_url()?>font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -74,16 +74,21 @@
                                     <div class="ibox float-e-margins" >
                                         <div class="ibox-content">
                                             <div>
-                                                <!-- <input type="hidden" value="<?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?>" id="url-formCode-<?php echo $form[$i]->formCode?>"> -->
                                                 <h3><b><?php echo $form[$i]->title?>  </b><span class="label label<?php echo $form[$i]->isActive==1? '-success">Aktif' : '-danger">Tidak Aktif'?></span></h3>
                                                 <?php if($form[$i]->isActive==1) {?>
                                                 
                                                 <?php }?>
+                                                <input readonly="true" type="text" class="form-control" name="title" value="<?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?>" id="url-formCode-<?php echo $form[$i]->formCode?>"><br>
                                                 <a href="<?php echo base_url()?>open/questioner/<?php echo rawurlencode($form[$i]->link) ?>" target="_blank"><button type="button" class="btn btn-xs btn-warning">View Questionare</button></a>
-                                                <!-- <button type="button" class="btn btn-xs btn-info myTooltip" data-toggle="tooltip" data-placement="top" title="Copy to clipboard" data-formCode="<?php echo $form[$i]->formCode?>">Copy URL</button> -->
+                                                <?php if($form[$i]->isActive==1){?>
+                                                    <a href="<?php echo base_url()?>admin/deadactivated/<?php echo $form[$i]->formCode?>"><button class="btn btn-xs btn-danger" onclick="return confirm('Apakah anda yakin?')">Deadactivated Questionare</button></a>
+                                                <?php }else {?>
+                                                    <a href="<?php echo base_url()?>admin/activated/<?php echo $form[$i]->formCode?>"><button class="btn btn-xs btn-success" onclick="return confirm('Apakah anda yakin?')">Activated Questionare</button></a>
+                                                <?php }?>
+                                                <button type="button" class="btn btn-xs btn-info myTooltip" data-toggle="tooltip" data-placement="top" title="Copy to clipboard" data-formCode="<?php echo $form[$i]->formCode?>">Copy URL</button>
                                                 <p><?php echo $form[$i]->description ?></p>
                                                 <button class="btn btn-xs btn-warning" disabled=""><i class="fa fa-pencil "></i> Edit Form</button>
-                                                <button class="btn btn-xs btn-danger" disabled=""><i class="fa fa-trash "></i> Delete Form</button>
+                                               <!--  <button class="btn btn-xs btn-danger" disabled=""><i class="fa fa-trash "></i> Delete Form</button> -->
                                                 <a href="<?php echo base_url('admin/question/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-info"><i class="fa fa-question"></i> Add Question</button></a>
                                                 <a href="<?php echo base_url('admin/export_excel/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-primary"><i class="fa fa-download"></i> Download Result</button></a>
                                                 <a href="<?php echo base_url('admin/view_dashboard/'.$form[$i]->formCode)?>"><button class="btn btn-xs btn-success"><i class="fa fa-eye"></i> View Dashboard</button></a>
@@ -133,11 +138,12 @@
                 $('.myTooltip').click(function(e){
                     var me = $(this);
                     var formCode = me.attr("data-formCode");
-                    var copyText = document.getElementById("url-formCode-"+formCode);
-                    copyText.select();
-                    document.execCommand("copy");
+                    var Url = document.getElementById("url-formCode-"+formCode);
+                      Url.focus();
+                      Url.select();
+                      document.execCommand("copy");
                 });
-
+                 
                 $('.i-checks').iCheck({
                     checkboxClass: 'icheckbox_square-green',
                     radioClass: 'iradio_square-green',

@@ -1,5 +1,5 @@
 <div class="footer">
         <div>
-            <strong>Digital Mastery</strong> &copy; <?php echo date('Y')?>
+            <strong><?php echo isset($companyName)? $companyName->valueName : ""?></strong> &copy; <?php echo date('Y')?>
         </div>
     </div>

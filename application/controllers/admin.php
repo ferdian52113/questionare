@@ -23,6 +23,7 @@ class admin extends CI_Controller {
 		// $data['list_multiple_choice'] = $this->model_admin->list_multiple_choice();
 		// $data['list_forced_choice'] = $this->model_admin->list_forced_choice();
 		// $data['list_kategori'] = $this->model_admin->list_kategori();
+		$data['companyName'] = $this->model_admin->getSetting("CompanyName");
 		$this->load->view('admin/form_list',$data);
 	}
 
@@ -364,7 +365,65 @@ class admin extends CI_Controller {
 		$data['section'] = $dtSection->status==true? $dtSection->data : null;
 		$data['question'] = $dtQuestion->status==true? $dtQuestion->data : null;
 		$data['questionDetail'] = $dtQuestionDetail->status==true? $dtQuestionDetail->data : null;
+		$data['companyName'] = $this->model_admin->getSetting("CompanyName");
 		$this->load->view('admin/question_list',$data);
+    }
+
+    function addQuestion(){
+    	$dataQuestion = array(
+			'formCode'		=> $this->input->post('formCode'),
+			'sectionID'		=> $this->input->post('sectionID'),
+			'questionType'		=> $this->input->post('questionType'),
+			'question'		=> $this->input->post('question'),
+			'isRequired'			=> $this->input->post('isRequired'),
+			'isOthers'		=> $this->input->post('isOthers'),
+			'rowStatus'		=>	1
+		);
+		$this->model_admin->insertData('tb_question', $dataQuestion);
+    }
+
+    function addSection(){
+    	$dataSection = array(
+			'formCode'		=> $this->input->post('formCode'),
+			'title'		=> $this->input->post('sectionTitleModal'),
+			'description'		=> $this->input->post('sectionDescriptionModal')
+		);
+		$this->model_admin->insertData('tb_section', $dataSection);
+		redirect('admin/question/'.$this->input->post('formCode'));
+    }
+
+    function editSection($sectionID){
+    	$dataSection = array(
+			'formCode'		=> $this->input->post('formCode'),
+			'title'		=> $this->input->post('sectionTitleModal'),
+			'description'		=> $this->input->post('sectionDescriptionModal')
+		);
+		$this->model_admin->updateData('sectionID',$sectionID, 'tb_section', $dataSection);
+		redirect('admin/question/'.$this->input->post('formCode'));
+    }
+
+    function delete($sectionID){
+		$this->model_admin->deleteData('sectionID',$sectionID, 'tb_section');
+		redirect('admin/question/'.$this->input->post('formCode'));
+    }
+
+    function deadactivated($formCode){
+    	$data = array(
+	        'isActive' => 0
+        );
+
+        $this->model_admin->updateData('formCode',$formCode, 'tb_form', $data);
+        redirect("admin/index");
+    }
+
+    function activated($formCode){
+
+        $data = array(
+	        'isActive' => 1
+        );
+
+        $this->model_admin->updateData('formCode',$formCode, 'tb_form', $data);
+        redirect("admin/index");
     }
 
 	function logout()

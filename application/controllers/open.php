@@ -12,7 +12,7 @@ class Open extends CI_Controller {
         $this->load->library('form_validation');
 		$this->load->model('model_questionare');
 		$this->load->model('model_admin');
-		$data['setting']  = $this->model_questionare->getSetting();
+		
 		date_default_timezone_set("Asia/Jakarta");
 	}
 	public function index()
@@ -47,7 +47,12 @@ class Open extends CI_Controller {
 			$data = $dtForm = json_decode($this->model_questionare->getDataTable('link',$link,'tb_form'));
 			if($data->status){
 				$formCode = $data->data[0]->formCode;
-				$this->loadQuestionare($formCode);
+				$status=$this->model_questionare->cekDataForm('tb_form',$formCode);
+				if(!$status){
+					$this->load->view('404');
+				} else {
+					$this->loadQuestionare($formCode);
+				}
 			} else {
 				redirect('error');
 			}
@@ -55,7 +60,12 @@ class Open extends CI_Controller {
 			$result=json_decode($this->model_questionare->getDefaultForm());
 			if($result->status){
 				$formCode=$result->data[0]->formCode;
-				$this->loadQuestionare($formCode);
+				$status=$this->model_questionare->cekDataForm('tb_form',$formCode);
+				if(!$status){
+					$this->load->view('404');
+				} else {
+					$this->loadQuestionare($formCode);
+				}
 			} else {
 				redirect('error');
 			}
@@ -71,6 +81,7 @@ class Open extends CI_Controller {
 		$data['section'] = $dtSection->status==true? $dtSection->data : null;
 		$data['question'] = $dtQuestion->status==true? $dtQuestion->data : null;
 		$data['questionDetail'] = $dtQuestionDetail->status==true? $dtQuestionDetail->data : null;
+		$data['companyName'] = $this->model_questionare->getSetting("CompanyName");
 		$this->load->view('template_question',$data);
 		//print_r($data['question']);
 	}
